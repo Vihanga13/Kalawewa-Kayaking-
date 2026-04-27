@@ -7,12 +7,13 @@ interface HeroSectionProps {
   onScrollDown?: () => void;
 }
 
-// ── Brand palette extracted from Kayaking Kalawewa logo ──
-// Navy blue:  #1B3A6B (body/hull/text)
-// Cyan/teal:  #00B4D8 (water waves)
-// Deep cyan:  #0077A8 (secondary water)
-// Red:        #E63329 (sun circle)
-// Light cyan: #48CAE4 (water highlights)
+// ── Light Theme Brand Palette ──
+// Deep navy (for text/dark accents): #1B3A6B
+// Cyan/teal (primary accent):       #0096B4 (slightly deeper for light bg)
+// Light cyan (water highlights):    #6ED4FF
+// Red (sun accent):                 #E63329
+// Warm sand background:             #FBF7F0
+// Soft shadow dark:                 rgba(0,0,0,0.08)
 
 const STATS = [
   { target: 500, suffix: "+", label: "Happy Adventurers", decimals: 0 },
@@ -69,7 +70,7 @@ function StatItem({
             transform: "translateY(-50%)",
             height: "36px",
             width: "1px",
-            background: "rgba(255,255,255,0.18)",
+            background: "rgba(27,58,107,0.15)", // navy with low opacity
           }}
         />
       )}
@@ -78,7 +79,7 @@ function StatItem({
           fontFamily: "'Cormorant Garamond', serif",
           fontSize: "34px",
           fontWeight: 700,
-          color: "#48CAE4",
+          color: "#0096B4", // deep cyan for light theme
           lineHeight: 1,
           marginBottom: "4px",
           letterSpacing: "-0.5px",
@@ -91,7 +92,7 @@ function StatItem({
         style={{
           fontFamily: "'Outfit', sans-serif",
           fontSize: "10px",
-          color: "rgba(255,255,255,0.5)",
+          color: "rgba(27,58,107,0.55)", // navy with opacity
           letterSpacing: "2px",
           textTransform: "uppercase",
         }}
@@ -116,7 +117,7 @@ export function HeroSection({
   const tRef = useRef(0);
   const rippleIdRef = useRef(0);
 
-  // ── Canvas animated scene ──
+  // ── Canvas animated scene (Light Theme version) ──
   const drawScene = useCallback((canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -126,46 +127,43 @@ export function HeroSection({
 
     ctx.clearRect(0, 0, W, H);
 
-    // ── Sky gradient (deep navy to dark teal-navy) ──
+    // ── Sky gradient (warm light sky for day) ──
     const skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.58);
-    skyGrad.addColorStop(0, "#060e1f");
-    skyGrad.addColorStop(0.3, "#0a1832");
-    skyGrad.addColorStop(0.65, "#0b2040");
-    skyGrad.addColorStop(1, "#0d2a3a");
+    skyGrad.addColorStop(0, "#FDFBF5");
+    skyGrad.addColorStop(0.3, "#F9F1E0");
+    skyGrad.addColorStop(0.65, "#EBE1CE");
+    skyGrad.addColorStop(1, "#DCD0BA");
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, W, H * 0.58);
 
-    // ── Stars ──
-    for (let i = 0; i < 80; i++) {
-      const sx = ((i * 173.1) % 1) * W;
-      const sy = ((i * 97.3) % 1) * H * 0.38;
-      const a = (0.15 + 0.6 * Math.abs(Math.sin(t * 0.0008 + i))) * (i % 3 === 0 ? 1 : 0.5);
+    // ── Clouds (soft white/cyan) ──
+    for (let i = 0; i < 12; i++) {
+      const sx = ((i * 113.7) % 1) * W;
+      const sy = ((i * 57.3) % 1) * H * 0.35 + H * 0.03;
+      const a = 0.35 + 0.2 * Math.abs(Math.sin(t * 0.0004 + i));
       ctx.beginPath();
-      ctx.arc(sx, sy, i % 5 === 0 ? 1.2 : 0.7, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(200,230,255,${a})`;
+      ctx.ellipse(sx, sy, 38 + (i % 3) * 18, 18, 0, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${a})`;
       ctx.fill();
     }
 
-    // ── Red sun / moon (from logo) ──
+    // ── Red sun (from logo) ──
     const sunX = W * 0.78, sunY = H * 0.14;
-    // outer glow
     const sunGlow = ctx.createRadialGradient(sunX, sunY, 8, sunX, sunY, 55);
-    sunGlow.addColorStop(0, "rgba(230,51,41,0.25)");
+    sunGlow.addColorStop(0, "rgba(230,51,41,0.12)");
     sunGlow.addColorStop(1, "rgba(230,51,41,0)");
     ctx.fillStyle = sunGlow;
     ctx.beginPath(); ctx.arc(sunX, sunY, 55, 0, Math.PI * 2); ctx.fill();
-    // sun disc
     ctx.beginPath(); ctx.arc(sunX, sunY, 18, 0, Math.PI * 2);
     ctx.fillStyle = "#E63329"; ctx.fill();
-    // crescent mask
     ctx.beginPath(); ctx.arc(sunX + 7, sunY - 4, 14, 0, Math.PI * 2);
-    ctx.fillStyle = "#060e1f"; ctx.fill();
+    ctx.fillStyle = "#FDFBF5"; ctx.fill();
 
-    // ── Floating light orbs (cyan tones) ──
+    // ── Light orbs (soft cyan) ──
     [
-      { x: 0.12, y: 0.22, r: 180, c: "rgba(0,180,216,0.06)" },
-      { x: 0.55, y: 0.18, r: 140, c: "rgba(27,58,107,0.08)" },
-      { x: 0.85, y: 0.3,  r: 200, c: "rgba(0,119,168,0.07)" },
+      { x: 0.12, y: 0.22, r: 180, c: "rgba(0,150,180,0.04)" },
+      { x: 0.55, y: 0.18, r: 140, c: "rgba(27,58,107,0.03)" },
+      { x: 0.85, y: 0.3,  r: 200, c: "rgba(0,150,180,0.05)" },
     ].forEach((orb, i) => {
       const ox = orb.x * W + 12 * Math.sin(t * 0.0004 + i * 2);
       const oy = orb.y * H + 8 * Math.cos(t * 0.0003 + i * 1.5);
@@ -176,39 +174,31 @@ export function HeroSection({
       ctx.beginPath(); ctx.arc(ox, oy, orb.r, 0, Math.PI * 2); ctx.fill();
     });
 
-    // ── Tree silhouettes (jungle, navy-dark) ──
+    // ── Tree silhouettes (dusty green/olive for light theme) ──
     const drawTree = (tx: number, ty: number, h: number, w: number, seed: number) => {
       ctx.save(); ctx.translate(tx, ty);
-      // trunk
-      ctx.fillStyle = "#05100a";
-      ctx.fillRect(-w * 0.04, 0, w * 0.08, h * 0.3);
+      ctx.fillStyle = "#6A7059";
+      ctx.fillRect(-w * 0.04, 0, w * 0.08, h * 0.28);
       for (let l = 0; l < 3; l++) {
         const ly = -h * (0.28 + l * 0.26);
         const lw = w * (0.9 - l * 0.22) * (1 + 0.03 * Math.sin(t * 0.0007 + seed + l));
         const lh = h * (0.36 - l * 0.04);
-        ctx.fillStyle = l === 0 ? "#0a2215" : l === 1 ? "#091a10" : "#07130b";
+        ctx.fillStyle = l === 0 ? "#8A9178" : l === 1 ? "#7A8268" : "#6A7059";
         ctx.beginPath();
         ctx.moveTo(0, ly - lh);
         ctx.bezierCurveTo(-lw * 0.55, ly - lh * 0.4, -lw * 0.5, ly, -lw, ly + lh * 0.18);
         ctx.bezierCurveTo(-lw * 0.28, ly + lh * 0.04, lw * 0.28, ly + lh * 0.04, lw, ly + lh * 0.18);
         ctx.bezierCurveTo(lw * 0.5, ly, lw * 0.55, ly - lh * 0.4, 0, ly - lh);
         ctx.fill();
-        // subtle cyan rim light on top layer
-        if (l === 2) {
-          ctx.strokeStyle = "rgba(0,180,216,0.08)";
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
       }
-      // hanging vines
       for (let v = 0; v < 3; v++) {
         const vx = -w * 0.28 + v * w * 0.27;
         const swing = 5 * Math.sin(t * 0.0005 + seed + v * 1.4);
-        ctx.strokeStyle = "rgba(10,45,20,0.7)";
+        ctx.strokeStyle = "rgba(90,85,65,0.5)";
         ctx.lineWidth = 1.5;
         ctx.beginPath();
         ctx.moveTo(vx, 0);
-        ctx.quadraticCurveTo(vx + swing, h * 0.14, vx + swing * 0.5, h * 0.3);
+        ctx.quadraticCurveTo(vx + swing, h * 0.14, vx + swing * 0.5, h * 0.28);
         ctx.stroke();
       }
       ctx.restore();
@@ -223,19 +213,19 @@ export function HeroSection({
       { x: W*0.97, y: H * 0.68, h: H * 0.42, w: W * 0.11, s: 6 },
     ].forEach(tr => drawTree(tr.x, tr.y, tr.h, tr.w, tr.s));
 
-    // ── Mist band ──
+    // ── Mist band (soft warm) ──
     const mist = ctx.createLinearGradient(0, H * 0.46, 0, H * 0.58);
-    mist.addColorStop(0, "rgba(0,180,216,0)");
-    mist.addColorStop(0.5, "rgba(0,180,216,0.05)");
-    mist.addColorStop(1, "rgba(0,180,216,0)");
+    mist.addColorStop(0, "rgba(0,150,180,0)");
+    mist.addColorStop(0.5, "rgba(0,150,180,0.04)");
+    mist.addColorStop(1, "rgba(0,150,180,0)");
     ctx.fillStyle = mist; ctx.fillRect(0, H * 0.46, W, H * 0.12);
 
-    // ── River (navy → cyan gradient) ──
+    // ── River (warm sandy → light navy gradient) ──
     const riverGrad = ctx.createLinearGradient(0, H * 0.56, 0, H);
-    riverGrad.addColorStop(0, "#0a2a3d");
-    riverGrad.addColorStop(0.3, "#0b2e42");
-    riverGrad.addColorStop(0.7, "#091f2e");
-    riverGrad.addColorStop(1, "#060f1a");
+    riverGrad.addColorStop(0, "#DCD0BA");
+    riverGrad.addColorStop(0.3, "#CBBFA7");
+    riverGrad.addColorStop(0.7, "#B8AA90");
+    riverGrad.addColorStop(1, "#A8987E");
     ctx.fillStyle = riverGrad;
     ctx.beginPath();
     ctx.moveTo(W * 0.17, H * 0.64);
@@ -243,65 +233,56 @@ export function HeroSection({
     ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
     ctx.fill();
 
-    // ── Cyan water shimmer lines ──
+    // ── Water shimmer (cyan/teal lines) ──
     for (let r = 0; r < 16; r++) {
       const rx = W * (0.20 + (r * 0.044) % 0.62);
       const ry = H * (0.68 + (r * 0.029) % 0.26);
       const rlen = W * (0.018 + 0.028 * Math.sin(t * 0.0014 + r));
-      const a = 0.07 + 0.1 * Math.abs(Math.sin(t * 0.0013 + r * 0.8));
-      ctx.strokeStyle = `rgba(0,180,216,${a})`;
+      const a = 0.12 + 0.1 * Math.abs(Math.sin(t * 0.0013 + r * 0.8));
+      ctx.strokeStyle = `rgba(0,150,180,${a})`;
       ctx.lineWidth = 1 + 0.4 * Math.sin(t * 0.002 + r);
       ctx.beginPath(); ctx.moveTo(rx - rlen, ry); ctx.lineTo(rx + rlen, ry); ctx.stroke();
     }
 
-    // ── Red sun river reflection ──
+    // ── Red sun reflection ──
     const refGrad = ctx.createLinearGradient(0, H * 0.64, 0, H * 0.92);
-    refGrad.addColorStop(0, "rgba(230,51,41,0.14)");
+    refGrad.addColorStop(0, "rgba(230,51,41,0.12)");
     refGrad.addColorStop(1, "rgba(230,51,41,0)");
     ctx.fillStyle = refGrad;
     ctx.beginPath();
     ctx.ellipse(W * 0.78, H * 0.78, W * 0.022 * (1 + 0.05 * Math.sin(t * 0.001)), H * 0.15, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── Elephants ──
+    // ── Elephants (deep navy for contrast) ──
     const drawElephant = (ex: number, ey: number, scale: number, phase: number) => {
       ctx.save(); ctx.translate(ex, ey); ctx.scale(scale, scale);
       const bob = 1.8 * Math.sin(t * 0.0009 + phase);
-      // body — navy blue matching logo
       ctx.fillStyle = "#1B3A6B";
       ctx.beginPath(); ctx.ellipse(0, bob, 40, 25, 0, 0, Math.PI * 2); ctx.fill();
-      // head
       ctx.beginPath(); ctx.ellipse(-30, -11 + bob, 21, 18, -0.2, 0, Math.PI * 2); ctx.fill();
-      // ear
-      ctx.fillStyle = "#152d55";
+      ctx.fillStyle = "#122C54";
       ctx.beginPath(); ctx.ellipse(-41, -10 + bob, 12, 10, 0.4, 0, Math.PI * 2); ctx.fill();
-      // trunk (swaying)
       const trunkSwing = 7 * Math.sin(t * 0.0016 + phase + 1);
       ctx.strokeStyle = "#1B3A6B"; ctx.lineWidth = 9; ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(-43, -4 + bob);
       ctx.quadraticCurveTo(-60, -20 + bob + trunkSwing, -54, -33 + bob + trunkSwing * 1.5);
       ctx.stroke();
-      // tusk (white/ivory)
-      ctx.strokeStyle = "rgba(220,205,170,0.75)"; ctx.lineWidth = 2.5;
+      ctx.strokeStyle = "rgba(210,190,140,0.8)"; ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.moveTo(-40, -7 + bob);
       ctx.quadraticCurveTo(-53, -11 + bob, -55, -5 + bob);
       ctx.stroke();
-      // legs
       ctx.fillStyle = "#1B3A6B";
       [-18, -4, 10, 24].forEach(lx => {
         ctx.beginPath();
-        if (ctx.roundRect) ctx.roundRect(lx - 5, 16 + bob, 10, 14, 3);
-        else ctx.rect(lx - 5, 16 + bob, 10, 14);
+        ctx.rect(lx - 5, 16 + bob, 10, 14);
         ctx.fill();
       });
-      // eye (cyan highlight)
-      ctx.fillStyle = "rgba(0,180,216,0.8)";
+      ctx.fillStyle = "#0096B4";
       ctx.beginPath(); ctx.arc(-35, -14 + bob, 2.5, 0, Math.PI * 2); ctx.fill();
-      // water ripples (cyan)
       [46, 64].forEach((rad, ri) => {
-        ctx.strokeStyle = `rgba(0,180,216,${0.13 - ri * 0.04 + 0.05 * Math.sin(t * 0.001 + phase + ri)})`;
+        ctx.strokeStyle = `rgba(0,150,180,${0.2 - ri * 0.05 + 0.05 * Math.sin(t * 0.001 + phase + ri)})`;
         ctx.lineWidth = 0.8;
         ctx.beginPath(); ctx.ellipse(0, 30 + bob, rad, rad * 0.22, 0, 0, Math.PI * 2); ctx.stroke();
       });
@@ -314,14 +295,12 @@ export function HeroSection({
       { xf: 0.66, yf: 0.642, sc: 0.88, ph: 3.2 },
     ].forEach(el => drawElephant(W * el.xf, H * el.yf, el.sc, el.ph));
 
-    // ── Kayakers (orange hull matching logo boat) ──
+    // ── Kayakers (navy + teal) ──
     const drawKayak = (kx: number, ky: number, phase: number) => {
       ctx.save(); ctx.translate(kx, ky);
       const bob = 2.2 * Math.sin(t * 0.002 + phase);
       const tilt = 0.045 * Math.sin(t * 0.0013 + phase);
       ctx.rotate(tilt);
-
-      // hull gradient (logo orange-blue boat)
       const hg = ctx.createLinearGradient(-32, 0, 32, 0);
       hg.addColorStop(0, "#1B3A6B");
       hg.addColorStop(0.4, "#1B3A6B");
@@ -329,31 +308,20 @@ export function HeroSection({
       hg.addColorStop(1, "#1B3A6B");
       ctx.fillStyle = hg;
       ctx.beginPath(); ctx.ellipse(0, bob, 30, 7, 0, 0, Math.PI * 2); ctx.fill();
-
-      // cockpit
       ctx.fillStyle = "#0d1f3a";
       ctx.beginPath(); ctx.ellipse(0, bob - 1.5, 11, 4.5, 0, 0, Math.PI * 2); ctx.fill();
-
-      // paddler silhouette (navy, matching logo)
       ctx.fillStyle = "#1B3A6B";
-      // torso
       ctx.beginPath(); ctx.ellipse(0, bob - 13, 5, 9, 0, 0, Math.PI * 2); ctx.fill();
-      // head
       ctx.beginPath(); ctx.arc(0, bob - 24, 5, 0, Math.PI * 2); ctx.fill();
-
-      // paddle
       const pAngle = 0.55 * Math.sin(t * 0.0022 + phase);
       ctx.save(); ctx.translate(0, bob - 13); ctx.rotate(pAngle);
       ctx.strokeStyle = "#0d2240"; ctx.lineWidth = 2.2; ctx.lineCap = "round";
       ctx.beginPath(); ctx.moveTo(-26, -3); ctx.lineTo(26, -3); ctx.stroke();
-      // blades (cyan water colour from logo)
-      ctx.fillStyle = "#00B4D8";
+      ctx.fillStyle = "#0096B4";
       ctx.beginPath(); ctx.ellipse(-26, -4, 4.5, 9.5, 0.4, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.ellipse(26, -4, 4.5, 9.5, -0.4, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
-
-      // wake lines (cyan)
-      ctx.strokeStyle = "rgba(0,180,216,0.18)"; ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(0,150,180,0.22)"; ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(30, bob + 4);
       ctx.quadraticCurveTo(52, bob + 2, 70, bob + 6);
@@ -370,12 +338,12 @@ export function HeroSection({
       drawKayak(kx, H * 0.702, k.ph);
     });
 
-    // ── Birds ──
+    // ── Birds (soft teal) ──
     for (let b = 0; b < 7; b++) {
       const bx = ((W * (0.05 + b * 0.14) + t * (0.018 + b * 0.003)) % (W + 80)) - 40;
       const by = H * (0.1 + (b * 0.037) % 0.1);
       const flap = Math.sin(t * 0.004 + b * 1.1);
-      ctx.strokeStyle = "rgba(0,180,216,0.45)"; ctx.lineWidth = 1.3; ctx.lineCap = "round";
+      ctx.strokeStyle = "rgba(0,150,180,0.5)"; ctx.lineWidth = 1.3; ctx.lineCap = "round";
       ctx.beginPath();
       ctx.moveTo(bx - 8, by);
       ctx.quadraticCurveTo(bx - 3, by + flap * 4.5, bx, by);
@@ -383,22 +351,8 @@ export function HeroSection({
       ctx.stroke();
     }
 
-    // ── Fireflies (cyan) ──
-    for (let f = 0; f < 30; f++) {
-      const seed1 = f * 137.5, seed2 = f * 89.7;
-      const fx = (seed1 % 1) * W * 0.6 + W * 0.2 + 20 * Math.sin(t * 0.0004 * (1 + f % 3) + seed2);
-      const fy = H * (0.48 + (seed2 % 1) * 0.22) + 12 * Math.cos(t * 0.0003 + seed1);
-      const a = 0.25 + 0.65 * Math.abs(Math.sin(t * 0.0018 * (1 + (f % 4) * 0.3) + f));
-      ctx.beginPath(); ctx.arc(fx, fy, 1.4, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0,180,216,${a})`; ctx.fill();
-      const fg = ctx.createRadialGradient(fx, fy, 0, fx, fy, 11);
-      fg.addColorStop(0, `rgba(72,202,228,${a * 0.35})`);
-      fg.addColorStop(1, "rgba(0,180,216,0)");
-      ctx.fillStyle = fg; ctx.beginPath(); ctx.arc(fx, fy, 11, 0, Math.PI * 2); ctx.fill();
-    }
-
-    // ── Foreground bushes ──
-    ctx.fillStyle = "#040c08";
+    // ── Foreground bushes (warm dark olive) ──
+    ctx.fillStyle = "#7A7358";
     ctx.beginPath();
     ctx.moveTo(0, H);
     ctx.lineTo(0, H * 0.8);
@@ -410,10 +364,10 @@ export function HeroSection({
     ctx.bezierCurveTo(W * 0.95, H * 0.74, W * 0.87, H * 0.78, W * 0.83, H * 0.83);
     ctx.lineTo(W * 0.81, H); ctx.closePath(); ctx.fill();
 
-    // ── Vignette ──
+    // ── Vignette (soft dark overlay for depth) ──
     const vig = ctx.createRadialGradient(W / 2, H / 2, H * 0.18, W / 2, H / 2, H * 0.88);
     vig.addColorStop(0, "rgba(0,0,0,0)");
-    vig.addColorStop(1, "rgba(0,0,0,0.62)");
+    vig.addColorStop(1, "rgba(0,0,0,0.08)");
     ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
 
     tRef.current += 16;
@@ -445,7 +399,6 @@ export function HeroSection({
     return () => clearTimeout(t);
   }, []);
 
-  // Water ripple on click
   const handleSectionClick = (e: React.MouseEvent<HTMLElement>) => {
     const rect = sectionRef.current!.getBoundingClientRect();
     const id = ++rippleIdRef.current;
@@ -476,7 +429,7 @@ export function HeroSection({
           to   { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
         @keyframes pulseGlow {
-          0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(230,51,41,0.7); }
+          0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(230,51,41,0.6); }
           50%      { opacity:0.5; box-shadow:0 0 0 6px rgba(230,51,41,0); }
         }
         @keyframes lineExpand {
@@ -514,23 +467,21 @@ export function HeroSection({
           font-family: 'Outfit', sans-serif;
           letter-spacing: 1px;
           text-transform: uppercase;
-          box-shadow: 0 8px 32px rgba(230,51,41,0.45);
+          box-shadow: 0 8px 20px rgba(230,51,41,0.25);
           transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s;
-          position: relative;
-          overflow: hidden;
         }
         .kk-btn-primary:hover {
           transform: translateY(-4px) scale(1.03);
-          box-shadow: 0 18px 48px rgba(230,51,41,0.6);
+          box-shadow: 0 18px 32px rgba(230,51,41,0.35);
         }
         .kk-btn-primary:active { transform: translateY(-1px) scale(0.99); }
 
         .kk-btn-secondary {
-          background: rgba(0,180,216,0.1);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          color: #fff;
-          border: 1px solid rgba(0,180,216,0.35);
+          background: rgba(0,150,180,0.1);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          color: #1B3A6B;
+          border: 1px solid rgba(0,150,180,0.35);
           padding: 18px 36px;
           border-radius: 50px;
           font-size: 14px;
@@ -543,13 +494,13 @@ export function HeroSection({
           transition: background 0.25s, border-color 0.25s, transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
         }
         .kk-btn-secondary:hover {
-          background: rgba(0,180,216,0.2);
-          border-color: rgba(0,180,216,0.6);
+          background: rgba(0,150,180,0.2);
+          border-color: rgba(0,150,180,0.7);
           transform: translateY(-3px);
         }
         .kk-btn-secondary:active { transform: translateY(0) scale(0.99); }
 
-        .kk-scroll-btn:hover .kk-scroll-label { color: #00B4D8; }
+        .kk-scroll-btn:hover .kk-scroll-label { color: #0096B4; }
       `}</style>
 
       <section
@@ -565,10 +516,9 @@ export function HeroSection({
           alignItems: "center",
           justifyContent: "center",
           cursor: "crosshair",
-          background: "#060e1f",
+          background: "#FBF7F0", // light sand background
         }}
       >
-        {/* ── Animated Canvas Scene ── */}
         <canvas
           ref={canvasRef}
           style={{
@@ -579,7 +529,6 @@ export function HeroSection({
           }}
         />
 
-        {/* ── Click ripples ── */}
         {ripples.map(r => (
           <div
             key={r.id}
@@ -590,7 +539,7 @@ export function HeroSection({
               width: "80px",
               height: "80px",
               borderRadius: "50%",
-              border: "1.5px solid rgba(0,180,216,0.7)",
+              border: "1.5px solid rgba(0,150,180,0.6)",
               animation: "waterRipple 1.8s cubic-bezier(0.22,1,0.36,1) forwards",
               pointerEvents: "none",
               zIndex: 2,
@@ -598,7 +547,6 @@ export function HeroSection({
           />
         ))}
 
-        {/* ── Badge ── */}
         <div
           style={{
             position: "absolute",
@@ -607,18 +555,18 @@ export function HeroSection({
             display: "flex",
             alignItems: "center",
             gap: "9px",
-            background: "rgba(0,180,216,0.1)",
+            background: "rgba(255,255,255,0.75)",
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid rgba(0,180,216,0.28)",
+            border: "1px solid rgba(0,150,180,0.2)",
             padding: "9px 24px",
             borderRadius: "50px",
             whiteSpace: "nowrap",
             animation: "badgeFade 0.7s ease-out 0.2s both",
             zIndex: 10,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.02)",
           }}
         >
-          {/* Red sun dot matching logo */}
           <div
             style={{
               width: "7px",
@@ -631,7 +579,7 @@ export function HeroSection({
           />
           <span
             style={{
-              color: "rgba(255,255,255,0.92)",
+              color: "#1B3A6B",
               fontFamily: "'Outfit', sans-serif",
               fontSize: "11px",
               fontWeight: 600,
@@ -643,7 +591,6 @@ export function HeroSection({
           </span>
         </div>
 
-        {/* ── Main Content ── */}
         <div
           style={{
             position: "relative",
@@ -654,7 +601,6 @@ export function HeroSection({
             zIndex: 10,
           }}
         >
-          {/* Eyebrow line */}
           <div
             style={{
               display: "flex",
@@ -669,7 +615,7 @@ export function HeroSection({
               style={{
                 height: "1px",
                 width: "48px",
-                background: "rgba(0,180,216,0.55)",
+                background: "rgba(0,150,180,0.6)",
                 transformOrigin: "right",
                 animation: "lineExpand 0.8s ease-out 0.7s both",
               }}
@@ -678,7 +624,7 @@ export function HeroSection({
               style={{
                 fontFamily: "'Outfit', sans-serif",
                 fontSize: "11px",
-                color: "#00B4D8",
+                color: "#0096B4",
                 letterSpacing: "3px",
                 textTransform: "uppercase",
                 fontWeight: 500,
@@ -690,20 +636,19 @@ export function HeroSection({
               style={{
                 height: "1px",
                 width: "48px",
-                background: "rgba(0,180,216,0.55)",
+                background: "rgba(0,150,180,0.6)",
                 transformOrigin: "left",
                 animation: "lineExpand 0.8s ease-out 0.7s both",
               }}
             />
           </div>
 
-          {/* Headline */}
           <h1
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontSize: "clamp(40px, 7.5vw, 88px)",
               fontWeight: 700,
-              color: "#fff",
+              color: "#1B3A6B",
               lineHeight: 1.05,
               marginBottom: "26px",
               letterSpacing: "-1px",
@@ -713,14 +658,13 @@ export function HeroSection({
             Paddle Beside{" "}
             <span
               style={{
-                color: "#00B4D8",
+                color: "#0096B4",
                 fontStyle: "italic",
                 position: "relative",
                 display: "inline-block",
               }}
             >
               Wild Elephants
-              {/* Underline in brand cyan */}
               <svg
                 viewBox="0 0 340 14"
                 style={{
@@ -734,7 +678,7 @@ export function HeroSection({
               >
                 <path
                   d="M4,10 C60,2 140,12 200,6 C260,0 310,8 336,5"
-                  stroke="#00B4D8"
+                  stroke="#0096B4"
                   strokeWidth="2.5"
                   fill="none"
                   strokeLinecap="round"
@@ -758,7 +702,7 @@ export function HeroSection({
                 fontSize: "0.52em",
                 fontWeight: 600,
                 fontStyle: "normal",
-                color: "rgba(255,255,255,0.55)",
+                color: "rgba(27,58,107,0.55)",
                 letterSpacing: "3px",
                 textTransform: "uppercase",
                 display: "block",
@@ -769,13 +713,12 @@ export function HeroSection({
             </span>
           </h1>
 
-          {/* Description */}
           <p
             style={{
               fontFamily: "'Outfit', sans-serif",
               fontSize: "clamp(14px, 1.8vw, 18px)",
-              fontWeight: 300,
-              color: "rgba(255,255,255,0.72)",
+              fontWeight: 400,
+              color: "rgba(27,58,107,0.7)",
               lineHeight: 1.85,
               margin: "0 auto 40px",
               maxWidth: "560px",
@@ -784,12 +727,11 @@ export function HeroSection({
           >
             Glide silently through ancient waters as wild elephants bathe just
             metres away. An intimate wildlife encounter{" "}
-            <em style={{ color: "#48CAE4", fontStyle: "italic" }}>
+            <em style={{ color: "#0096B4", fontStyle: "italic" }}>
               unlike anywhere else on Earth.
             </em>
           </p>
 
-          {/* CTA Buttons */}
           <div
             style={{
               display: "flex",
@@ -815,12 +757,11 @@ export function HeroSection({
                   width: "34px",
                   height: "34px",
                   borderRadius: "50%",
-                  background: "rgba(255,255,255,0.95)",
+                  background: "rgba(27,58,107,0.08)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
-                  boxShadow: "0 0 0 4px rgba(0,180,216,0.2)",
                 }}
               >
                 <Play size={12} fill="#1B3A6B" color="#1B3A6B" style={{ marginLeft: "2px" }} />
@@ -829,7 +770,6 @@ export function HeroSection({
             </button>
           </div>
 
-          {/* Stats */}
           <div
             style={{
               display: "flex",
@@ -850,7 +790,6 @@ export function HeroSection({
           </div>
         </div>
 
-        {/* ── Scroll Indicator ── */}
         <button
           className="kk-scroll-btn"
           onClick={() => scrollTo("#about")}
@@ -870,12 +809,11 @@ export function HeroSection({
             zIndex: 10,
           }}
         >
-          
           <div
             style={{
               width: "1px",
               height: "44px",
-              background: "rgba(255,255,255,0.12)",
+              background: "rgba(27,58,107,0.15)",
               position: "relative",
               overflow: "hidden",
             }}
@@ -887,15 +825,14 @@ export function HeroSection({
                 left: 0,
                 right: 0,
                 height: "100%",
-                background: "linear-gradient(to bottom, transparent, #00B4D8, transparent)",
+                background: "linear-gradient(to bottom, transparent, #0096B4, transparent)",
                 animation: "scrollLine 1.8s ease-in-out infinite",
               }}
             />
           </div>
-          <ChevronDown size={16} color="rgba(0,180,216,0.75)" />
+          <ChevronDown size={16} color="#0096B4" />
         </button>
 
-        {/* ── Animated Wave Divider ── */}
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, lineHeight: 0, zIndex: 5 }}>
           <svg
             viewBox="0 0 1440 80"
@@ -903,8 +840,7 @@ export function HeroSection({
             preserveAspectRatio="none"
             style={{ display: "block", width: "100%", height: "80px" }}
           >
-            {/* Back wave - cyan brand color */}
-            <path fill="rgba(0,180,216,0.12)" d="M0,50 C200,20 400,80 600,50 C800,20 1000,80 1200,50 C1300,35 1370,45 1440,50 L1440,80 L0,80 Z">
+            <path fill="rgba(0,150,180,0.1)" d="M0,50 C200,20 400,80 600,50 C800,20 1000,80 1200,50 C1300,35 1370,45 1440,50 L1440,80 L0,80 Z">
               <animate
                 attributeName="d"
                 dur="5s"
@@ -916,7 +852,6 @@ export function HeroSection({
                 "
               />
             </path>
-            {/* Front wave - page background */}
             <path fill="#FAF5EA" d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z">
               <animate
                 attributeName="d"
@@ -932,7 +867,6 @@ export function HeroSection({
           </svg>
         </div>
 
-        {/* ── Video Modal ── */}
         {videoOpen && (
           <div
             onClick={() => setVideoOpen(false)}
@@ -940,7 +874,7 @@ export function HeroSection({
               position: "fixed",
               inset: 0,
               zIndex: 300,
-              background: "rgba(6,14,31,0.92)",
+              background: "rgba(251,247,240,0.95)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -951,14 +885,14 @@ export function HeroSection({
             <div
               onClick={e => e.stopPropagation()}
               style={{
-                background: "#060e1f",
-                borderRadius: "20px",
+                background: "#FFFFFF",
+                borderRadius: "24px",
                 overflow: "hidden",
                 width: "90%",
                 maxWidth: "900px",
                 aspectRatio: "16/9",
-                border: "1px solid rgba(0,180,216,0.18)",
-                boxShadow: "0 40px 100px rgba(0,0,0,0.7), 0 0 0 1px rgba(230,51,41,0.08)",
+                border: "1px solid rgba(0,150,180,0.2)",
+                boxShadow: "0 40px 80px rgba(0,0,0,0.1), 0 0 0 1px rgba(230,51,41,0.05)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -967,7 +901,6 @@ export function HeroSection({
                 animation: "modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both",
               }}
             >
-              {/* Logo-inspired icon: red circle + play */}
               <div
                 style={{
                   width: "76px",
@@ -981,13 +914,14 @@ export function HeroSection({
                   animation: "sunPulse 2s ease-in-out infinite",
                 }}
               >
-                <Play size={28} color="#00B4D8" style={{ marginLeft: "4px" }} />
+                <Play size={28} color="#0096B4" style={{ marginLeft: "4px" }} />
               </div>
               <p
                 style={{
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: "16px",
-                  color: "rgba(255,255,255,0.5)",
+                  color: "#1B3A6B",
+                  opacity: 0.6,
                   textAlign: "center",
                 }}
               >
@@ -997,9 +931,9 @@ export function HeroSection({
                 onClick={() => setVideoOpen(false)}
                 style={{
                   marginTop: "8px",
-                  background: "rgba(0,180,216,0.1)",
-                  border: "1px solid rgba(0,180,216,0.28)",
-                  color: "rgba(255,255,255,0.8)",
+                  background: "rgba(0,150,180,0.1)",
+                  border: "1px solid rgba(0,150,180,0.25)",
+                  color: "#1B3A6B",
                   padding: "10px 32px",
                   borderRadius: "50px",
                   cursor: "pointer",
@@ -1007,8 +941,8 @@ export function HeroSection({
                   fontSize: "13px",
                   transition: "background 0.2s",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,180,216,0.22)")}
-                onMouseLeave={e => (e.currentTarget.style.background = "rgba(0,180,216,0.1)")}
+                onMouseEnter={e => (e.currentTarget.style.background = "rgba(0,150,180,0.2)")}
+                onMouseLeave={e => (e.currentTarget.style.background = "rgba(0,150,180,0.1)")}
               >
                 Close
               </button>
