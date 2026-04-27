@@ -1,4 +1,3 @@
-import "../styles/fonts.css";
 import { Navbar } from "./components/Navbar";
 import { HeroSection } from "./components/HeroSection";
 import { AboutSection } from "./components/AboutSection";
