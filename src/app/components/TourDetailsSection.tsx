@@ -1,95 +1,105 @@
-import { Clock, DollarSign, MapPin, Users, Sun, Camera, Waves, Sparkles, Calendar, Shield, Heart, Star, Quote } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-// Brand Colors
-const COLORS = {
-  navy: "#1B3A6B",
-  cyan: "#00B4D8",
-  lightCyan: "#48CAE4",
-  red: "#E63329",
-};
+// ── Brand palette ──
+const N = "#1B3A6B";   // navy
+const C = "#00B4D8";   // cyan
+const LC = "#48CAE4";  // light cyan
+const R = "#E63329";   // red
 
+// ── Data ──
 const details = [
   {
-    icon: <Clock size={22} />,
-    label: "Duration",
-    value: "3–4 Hours",
-    sub: "Morning or afternoon slots",
-    color: COLORS.cyan,
-    bg: `${COLORS.cyan}08`,
-    border: `${COLORS.cyan}15`,
+    label: "Duration",    value: "3–4 Hours",     sub: "Morning & afternoon slots · sunrise available",
+    color: C,  iconColor: C,  accentBg: "rgba(0,180,216,0.10)",  large: true,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+      </svg>
+    ),
   },
   {
-    icon: <DollarSign size={22} />,
-    label: "Price",
-    value: "From $89",
-    sub: "Per person · all inclusive",
-    color: COLORS.lightCyan,
-    bg: `${COLORS.lightCyan}08`,
-    border: `${COLORS.lightCyan}15`,
+    label: "Group Size",  value: "Max 6",          sub: "Intimate · never crowded",
+    color: C,  iconColor: C,  accentBg: "rgba(0,180,216,0.10)",  large: false,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    ),
   },
   {
-    icon: <MapPin size={22} />,
-    label: "Location",
-    value: "Kalawewa",
-    sub: "North Central Province, LK",
-    color: COLORS.navy,
-    bg: `${COLORS.navy}06`,
-    border: `${COLORS.navy}12`,
+    label: "Price",       value: "From $89",       sub: "Per person · all inclusive",
+    color: R,  iconColor: R,  accentBg: "rgba(230,51,41,0.09)",  large: false,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={R} strokeWidth="1.8" strokeLinecap="round">
+        <line x1="12" y1="1" x2="12" y2="23"/>
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+      </svg>
+    ),
   },
   {
-    icon: <Users size={22} />,
-    label: "Group Size",
-    value: "Max 8 People",
-    sub: "Intimate, never crowded",
-    color: COLORS.cyan,
-    bg: `${COLORS.cyan}08`,
-    border: `${COLORS.cyan}15`,
+    label: "Location",    value: "Kalawewa",        sub: "North Central Province, LK",
+    color: N,  iconColor: N,  accentBg: "rgba(27,58,107,0.07)",  large: false,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={N} strokeWidth="1.8" strokeLinecap="round">
+        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+      </svg>
+    ),
   },
   {
-    icon: <Sun size={22} />,
-    label: "Best Season",
-    value: "Jun – Oct",
-    sub: "Peak elephant gathering",
-    color: COLORS.red,
-    bg: `${COLORS.red}06`,
-    border: `${COLORS.red}12`,
+    label: "Best Season", value: "June – October",  sub: "Peak elephant gathering at Minneriya & Kaudulla",
+    color: R,  iconColor: R,  accentBg: "rgba(230,51,41,0.09)",  large: true,
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={R} strokeWidth="1.8" strokeLinecap="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      </svg>
+    ),
   },
   {
-    icon: <Camera size={22} />,
-    label: "Photography",
-    value: "Unrestricted",
-    sub: "Bring your best lens",
-    color: COLORS.lightCyan,
-    bg: `${COLORS.lightCyan}08`,
-    border: `${COLORS.lightCyan}15`,
+    label: "Photography", value: "Unrestricted",    sub: "Bring your best lens",
+    color: LC, iconColor: LC, accentBg: "rgba(72,202,228,0.10)", large: false,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={LC} strokeWidth="1.8" strokeLinecap="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    ),
   },
 ];
 
 const included = [
-  { text: "Professional kayak with paddle & safety gear", icon: <Waves size={16} /> },
-  { text: "Certified naturalist guide on every tour", icon: <Shield size={16} /> },
-  { text: "Life jacket & full safety briefing", icon: <Heart size={16} /> },
-  { text: "Light refreshments & chilled water", icon: <Coffee size={16} /> },
-  { text: "Wildlife photography tips & guidance", icon: <Camera size={16} /> },
-  { text: "Eco-friendly experience certificate", icon: <Sparkles size={16} /> },
+  { text: "Professional kayak with paddle & safety gear",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg> },
+  { text: "Certified naturalist guide on every tour",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+  { text: "Life jacket & full safety briefing",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> },
+  { text: "Light refreshments & chilled water",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg> },
+  { text: "Wildlife photography tips & guidance",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> },
+  { text: "Eco-friendly experience certificate",
+    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
 ];
 
-// Tourist testimonials
-const touristReviews = [
-  { name: "Emma Thompson", location: "London, UK", rating: 5, comment: "Absolutely incredible! We saw 23 elephants including 4 babies. The guides are true conservationists.", avatar: "E", date: "2 weeks ago" },
-  { name: "Rajiv Mehta", location: "Mumbai, India", rating: 5, comment: "Best wildlife experience of my life. Silent kayaking makes all the difference — elephants didn't even notice us.", avatar: "R", date: "1 month ago" },
-  { name: "Sarah Chen", location: "Singapore", rating: 5, comment: "Worth every penny. Sunrise on the water with mist and elephants calling — pure magic!", avatar: "S", date: "3 weeks ago" },
+const reviews = [
+  { avatar: "E", name: "Emma Thompson",      loc: "London, UK",    date: "2 weeks ago",  comment: "Absolutely incredible! We saw 23 elephants including 4 babies. The guides are true conservationists." },
+  { avatar: "R", name: "Rajiv Mehta",        loc: "Mumbai, India", date: "1 month ago",  comment: "Best wildlife experience of my life. Silent kayaking makes all the difference — elephants didn't even notice us." },
+  { avatar: "S", name: "Sarah Chen",         loc: "Singapore",     date: "3 weeks ago",  comment: "Worth every penny. Sunrise on the water with mist and elephants calling — pure magic!" },
 ];
 
-function useInView(threshold = 0.12) {
+// ── Helpers ──
+function useInView(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
       { threshold }
     );
     obs.observe(el);
@@ -98,557 +108,435 @@ function useInView(threshold = 0.12) {
   return { ref, inView };
 }
 
-function DetailCard({ detail, index, inView }: { detail: typeof details[0]; index: number; inView: boolean }) {
-  const [hovered, setHovered] = useState(false);
+const StarShape = () => (
+  <div style={{
+    width: "10px", height: "10px", background: R, flexShrink: 0,
+    clipPath: "polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)",
+  }} />
+);
 
+// ── Sub-components ──
+function BentoTile({ d, index, inView }: { d: typeof details[0]; index: number; inView: boolean }) {
+  const [hov, setHov] = useState(false);
   return (
     <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
       style={{
-        background: "white",
-        borderRadius: "1.5rem",
-        padding: "1.5rem",
-        border: `1px solid ${hovered ? detail.border : "rgba(27,58,107,0.08)"}`,
-        boxShadow: hovered
-          ? `0 20px 40px rgba(0,0,0,0.08), 0 0 0 2px ${detail.color}20`
-          : "0 2px 12px rgba(0,0,0,0.04)",
-        transition: "all 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-        transform: inView
-          ? hovered ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)"
-          : "translateY(40px)",
-        opacity: inView ? 1 : 0,
-        transitionDelay: inView ? `${index * 0.06}s` : "0s",
-        cursor: "default",
+        background: "#fff",
+        borderRadius: "22px",
+        border: `1px solid ${hov ? d.color + "33" : "rgba(27,58,107,0.07)"}`,
+        padding: "28px 26px",
         position: "relative",
         overflow: "hidden",
+        cursor: "default",
+        gridColumn: d.large ? "span 2" : "span 1",
+        transition: "transform 0.35s cubic-bezier(0.34,1.56,.64,1), box-shadow 0.3s, border-color 0.3s",
+        transform: inView
+          ? hov ? "translateY(-6px) scale(1.01)" : "translateY(0)"
+          : "translateY(40px)",
+        opacity: inView ? 1 : 0,
+        transitionDelay: inView ? `${index * 0.07}s` : "0s",
+        boxShadow: hov ? "0 20px 48px rgba(27,58,107,0.11)" : "0 2px 12px rgba(27,58,107,0.04)",
       }}
     >
-      {/* Top accent gradient */}
+      {/* top accent */}
       <div style={{
-        position: "absolute",
-        top: 0, left: 0, right: 0,
-        height: "3px",
-        background: `linear-gradient(90deg, ${detail.color}, transparent)`,
-        opacity: hovered ? 1 : 0.3,
+        position: "absolute", top: 0, left: 0, right: 0, height: "3px",
+        background: d.color, opacity: hov ? 1 : 0.28,
         transition: "opacity 0.3s",
       }} />
-
-      {/* Icon */}
+      {/* corner orb */}
+      {d.large && (
+        <div style={{
+          position: "absolute", right: "-20px", bottom: "-20px",
+          width: "100px", height: "100px", borderRadius: "50%",
+          background: d.color + "09", pointerEvents: "none",
+        }} />
+      )}
+      {/* icon */}
       <div style={{
-        width: "3rem", height: "3rem",
-        borderRadius: "1rem",
-        background: hovered ? detail.bg : "rgba(27,58,107,0.04)",
-        border: `1px solid ${hovered ? detail.border : "rgba(27,58,107,0.06)"}`,
+        width: "44px", height: "44px", borderRadius: "14px",
+        background: hov ? d.accentBg : "rgba(27,58,107,0.04)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        color: hovered ? detail.color : COLORS.navy,
-        marginBottom: "1rem",
-        transition: "all 0.3s ease",
-        transform: hovered ? "scale(1.05) rotate(-2deg)" : "scale(1)",
+        marginBottom: "18px",
+        transition: "background 0.3s, transform 0.3s cubic-bezier(0.34,1.56,.64,1)",
+        transform: hov ? "scale(1.08) rotate(-3deg)" : "scale(1)",
       }}>
-        {detail.icon}
+        {d.icon}
       </div>
-
-      {/* Label */}
-      <p style={{
+      {/* label */}
+      <div style={{
         fontFamily: "'Outfit', sans-serif",
-        fontSize: "0.65rem",
-        color: hovered ? detail.color : "#6B7E73",
-        fontWeight: 600,
-        letterSpacing: "2px",
-        textTransform: "uppercase",
-        marginBottom: "0.25rem",
+        fontSize: "9px", fontWeight: 700, letterSpacing: "2.2px",
+        textTransform: "uppercase", color: hov ? d.color : "#8aabb0",
+        marginBottom: "6px", transition: "color 0.2s",
       }}>
-        {detail.label}
-      </p>
-
-      {/* Value */}
-      <p style={{
+        {d.label}
+      </div>
+      {/* value */}
+      <div style={{
         fontFamily: "'Cormorant Garamond', serif",
-        fontSize: "1.6rem",
-        fontWeight: 700,
-        color: COLORS.navy,
-        lineHeight: 1.2,
-        marginBottom: "0.25rem",
+        fontSize: d.large ? "34px" : "26px",
+        fontWeight: 700, color: d.label === "Price" ? R : N,
+        lineHeight: 1.1, marginBottom: "4px",
       }}>
-        {detail.value}
-      </p>
-
-      {/* Sub */}
-      <p style={{
+        {d.value}
+      </div>
+      {/* sub */}
+      <div style={{
         fontFamily: "'Outfit', sans-serif",
-        fontSize: "0.75rem",
-        fontWeight: 300,
-        color: "#8AA493",
-        lineHeight: 1.4,
+        fontSize: "11px", fontWeight: 300,
+        color: "#8aabb0", lineHeight: 1.5,
       }}>
-        {detail.sub}
-      </p>
+        {d.sub}
+      </div>
     </div>
   );
 }
 
-// Mini coffee icon
-function Coffee(props: any) {
+function IncludedItem({ item }: { item: typeof included[0] }) {
+  const [hov, setHov] = useState(false);
   return (
-    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3"/>
-    </svg>
+    <div
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      style={{
+        display: "flex", alignItems: "center", gap: "12px",
+        padding: "12px 14px", borderRadius: "12px",
+        background: hov ? "rgba(0,180,216,0.08)" : "transparent",
+        transform: hov ? "translateX(5px)" : "translateX(0)",
+        transition: "background 0.22s, transform 0.22s",
+        cursor: "default",
+      }}
+    >
+      <div style={{
+        width: "32px", height: "32px", borderRadius: "50%",
+        background: "rgba(0,180,216,0.12)", border: "1px solid rgba(0,180,216,0.2)",
+        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        color: C,
+      }}>
+        {item.icon}
+      </div>
+      <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 300, color: "rgba(255,255,255,0.82)" }}>
+        {item.text}
+      </span>
+    </div>
   );
 }
 
+// ── Main export ──
 export function TourDetailsSection() {
   const { ref: headerRef, inView: headerIn } = useInView(0.1);
-  const { ref: cardsRef, inView: cardsIn } = useInView(0.1);
-  const { ref: includedRef, inView: includedIn } = useInView(0.1);
-  const { ref: reviewsRef, inView: reviewsIn } = useInView(0.1);
-  const [activeReview, setActiveReview] = useState(0);
-
-  // Auto-rotate reviews
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveReview((prev) => (prev + 1) % touristReviews.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
+  const { ref: bentoRef,  inView: bentoIn  } = useInView(0.08);
+  const { ref: incRef,    inView: incIn    } = useInView(0.08);
+  const { ref: revRef,    inView: revIn    } = useInView(0.1);
+  const { ref: ctaRef,    inView: ctaIn    } = useInView(0.1);
 
   return (
     <>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
       />
+
       <style>{`
-        @keyframes floatOrb {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          50% { transform: translateY(-15px) translateX(8px); }
+        @keyframes tdPulse {
+          0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(230,51,41,.6); }
+          50%      { opacity:.5; box-shadow:0 0 0 5px rgba(230,51,41,0); }
         }
-        @keyframes waveSoft {
-          0%, 100% { d: path("M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z"); }
-          50% { d: path("M0,50 C480,10 960,65 1440,25 L1440,80 L0,80 Z"); }
+        .td-inc-item-wrap { transition: background .22s, transform .22s; }
+        .td-inc-item-wrap:hover { background: rgba(0,180,216,0.08) !important; transform: translateX(5px); }
+        .td-review-card { transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .3s; }
+        .td-review-card:hover { transform: translateY(-5px) !important; border-color: rgba(0,180,216,0.3) !important; }
+        .td-cta-btn-main {
+          background: ${R};
+          color: #fff;
+          border: none;
+          padding: 16px 38px;
+          border-radius: 50px;
+          font-family: 'Outfit', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: .8px;
+          text-transform: uppercase;
+          cursor: pointer;
+          white-space: nowrap;
+          box-shadow: 0 8px 24px rgba(230,51,41,.38);
+          transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
         }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
+        .td-cta-btn-main:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 36px rgba(230,51,41,.55); }
+
+        @media (max-width: 640px) {
+          .td-bento-grid     { grid-template-columns: 1fr 1fr !important; }
+          .td-bento-large    { grid-column: span 2 !important; }
+          .td-included-grid  { grid-template-columns: 1fr !important; padding: 28px 22px !important; gap: 24px !important; }
+          .td-reviews-grid   { grid-template-columns: 1fr !important; }
+          .td-cta-inner      { flex-direction: column !important; text-align: center !important; padding: 28px 22px !important; }
+          .td-section-pad    { padding: 52px 16px 0 !important; }
         }
-        @keyframes pulseDot {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50% { transform: scale(1.3); opacity: 0.7; }
-        }
-        .included-item {
-          transition: all 0.3s ease;
-        }
-        .included-item:hover {
-          transform: translateX(6px);
-          background: rgba(0,180,216,0.05);
-        }
-        @media (max-width: 768px) {
-          .reviews-container {
-            grid-template-columns: 1fr !important;
-          }
+        @media (max-width: 860px) and (min-width: 641px) {
+          .td-reviews-grid { grid-template-columns: 1fr 1fr !important; }
         }
       `}</style>
 
       <section
         id="tour-details"
-        style={{
-          background: "#FAF5EA",
-          padding: "5rem 1.5rem 0",
-          position: "relative",
-          overflow: "hidden",
-        }}
+        style={{ background: "#FAF5EA", position: "relative", overflow: "hidden" }}
       >
-        {/* Decorative background elements */}
-        <div style={{
-          position: "absolute",
-          top: "10%",
-          right: "-5%",
-          width: "300px",
-          height: "300px",
-          borderRadius: "50%",
-          background: `${COLORS.cyan}03`,
-          filter: "blur(60px)",
-          pointerEvents: "none",
-          animation: "floatOrb 12s ease-in-out infinite",
-        }} />
-        <div style={{
-          position: "absolute",
-          bottom: "20%",
-          left: "-10%",
-          width: "250px",
-          height: "250px",
-          borderRadius: "50%",
-          background: `${COLORS.lightCyan}03`,
-          filter: "blur(50px)",
-          pointerEvents: "none",
-          animation: "floatOrb 15s ease-in-out 2s infinite",
-        }} />
-
-        {/* Water dots pattern */}
+        {/* dot pattern */}
         <div style={{
           position: "absolute", inset: 0,
-          backgroundImage: `radial-gradient(circle, ${COLORS.cyan}08 1px, transparent 1px)`,
-          backgroundSize: "32px 32px",
-          pointerEvents: "none",
-          opacity: 0.5,
+          backgroundImage: `radial-gradient(circle, rgba(0,180,216,0.09) 1.2px, transparent 1.2px)`,
+          backgroundSize: "28px 28px",
+          pointerEvents: "none", zIndex: 0,
         }} />
 
-        <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <div
+          className="td-section-pad"
+          style={{ maxWidth: "1100px", margin: "0 auto", padding: "72px 28px 0", position: "relative", zIndex: 1 }}
+        >
 
-          {/* ── Header with tourist connection ── */}
-          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "3rem" }}>
-            <div
-              style={{
-                display: "inline-flex", alignItems: "center", gap: "8px",
-                background: `${COLORS.red}08`,
-                color: COLORS.red,
-                padding: "0.4rem 1.2rem",
-                borderRadius: "50px",
-                fontSize: "0.7rem", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
-                fontFamily: "'Outfit', sans-serif",
-                border: `1px solid ${COLORS.red}15`,
-                marginBottom: "1rem",
-                opacity: headerIn ? 1 : 0,
-                transform: headerIn ? "translateY(0)" : "translateY(12px)",
-                transition: "opacity 0.6s ease, transform 0.6s ease",
-              }}
-            >
-              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: COLORS.red, animation: "pulseDot 2s infinite" }} />
+          {/* ── HEADER ── */}
+          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "56px" }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: "7px",
+              background: "rgba(230,51,41,0.09)", border: "1px solid rgba(230,51,41,0.22)",
+              color: R, padding: "6px 18px", borderRadius: "50px",
+              fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase",
+              fontFamily: "'Outfit', sans-serif", marginBottom: "18px",
+              opacity: headerIn ? 1 : 0,
+              transform: headerIn ? "translateY(0)" : "translateY(14px)",
+              transition: "opacity .6s ease, transform .6s ease",
+            }}>
+              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "tdPulse 2s infinite" }} />
               Plan Your Adventure
             </div>
 
-            <h2
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(2rem, 5.5vw, 3.5rem)",
-                fontWeight: 700,
-                color: COLORS.navy,
-                lineHeight: 1.1,
-                marginBottom: "0.5rem",
-                opacity: headerIn ? 1 : 0,
-                transform: headerIn ? "translateY(0)" : "translateY(20px)",
-                transition: "opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
-              }}
-            >
-              Everything You Need to{" "}
-              <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Know</span>
+            <h2 style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "clamp(30px,5vw,58px)", fontWeight: 700, color: N,
+              lineHeight: 1.08, letterSpacing: "-0.5px",
+              opacity: headerIn ? 1 : 0,
+              transform: headerIn ? "translateY(0)" : "translateY(20px)",
+              transition: "opacity .7s ease .1s, transform .7s ease .1s",
+            }}>
+              Everything You Need<br />to <em style={{ color: LC, fontStyle: "italic" }}>Know</em>
             </h2>
 
-            <p
-              style={{
-                fontFamily: "'Outfit', sans-serif", fontWeight: 300,
-                color: "#6B7E73", fontSize: "clamp(0.85rem, 1.8vw, 1rem)",
-                maxWidth: "520px", margin: "1rem auto 0", lineHeight: 1.7,
-                opacity: headerIn ? 1 : 0,
-                transform: headerIn ? "translateY(0)" : "translateY(15px)",
-                transition: "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s",
-              }}
-            >
-              No hidden costs. No surprises. Just you, the river,
-              and the gentle giants of Kalawewa.
+            <p style={{
+              fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 300,
+              color: "#6b7e8a", lineHeight: 1.75, maxWidth: "460px", margin: "14px auto 0",
+              opacity: headerIn ? 1 : 0,
+              transform: headerIn ? "translateY(0)" : "translateY(16px)",
+              transition: "opacity .7s ease .2s, transform .7s ease .2s",
+            }}>
+              No hidden costs. No surprises. Just you, the river, and the gentle giants of Kalawewa.
             </p>
           </div>
 
-          {/* ── Live Tourist Count Banner (Eye-catching) ── */}
+          {/* ── BENTO GRID ── */}
           <div
-            style={{
-              background: `linear-gradient(135deg, white, ${COLORS.cyan}04)`,
-              borderRadius: "1.5rem",
-              padding: "1rem 1.5rem",
-              marginBottom: "2.5rem",
-              border: `1px solid ${COLORS.cyan}15`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              flexWrap: "wrap",
-              gap: "1rem",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <div style={{
-                width: "2.5rem", height: "2.5rem",
-                borderRadius: "50%",
-                background: `${COLORS.cyan}10`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Users size={18} color={COLORS.cyan} />
-              </div>
-              <div>
-                <div style={{ fontSize: "0.7rem", color: "#8AA493", letterSpacing: "1px" }}>JOINED THIS MONTH</div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 700, color: COLORS.navy, fontFamily: "'Cormorant Garamond', serif" }}>
-                  342 <span style={{ fontSize: "0.9rem", color: COLORS.cyan }}>happy adventurers</span>
-                </div>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={14} fill={COLORS.red} color={COLORS.red} />
-              ))}
-              <span style={{ fontSize: "0.8rem", color: COLORS.navy, fontWeight: 500 }}>4.98 ★ (1,284 reviews)</span>
-            </div>
-          </div>
-
-          {/* ── Detail Cards ── */}
-          <div
-            ref={cardsRef}
+            ref={bentoRef}
+            className="td-bento-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-              gap: "1rem",
-              marginBottom: "3rem",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "14px",
+              marginBottom: "52px",
             }}
           >
             {details.map((d, i) => (
-              <DetailCard key={i} detail={d} index={i} inView={cardsIn} />
+              <div key={i} className={d.large ? "td-bento-large" : ""} style={{ gridColumn: d.large ? "span 2" : "span 1" }}>
+                <BentoTile d={d} index={i} inView={bentoIn} />
+              </div>
             ))}
           </div>
 
-          {/* ── What's Included Section with Tourist Vibe ── */}
+          {/* ── INCLUDED DARK PANEL ── */}
           <div
-            ref={includedRef}
+            ref={incRef}
+            className="td-included-grid"
             style={{
-              background: `linear-gradient(135deg, ${COLORS.navy} 0%, #0F2A4A 100%)`,
-              borderRadius: "2rem",
-              padding: "clamp(2rem, 5vw, 3rem)",
-              marginBottom: "3rem",
+              background: N,
+              borderRadius: "26px",
+              padding: "44px 48px",
+              marginBottom: "52px",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "40px",
               position: "relative",
               overflow: "hidden",
-              opacity: includedIn ? 1 : 0,
-              transform: includedIn ? "translateY(0)" : "translateY(30px)",
-              transition: "opacity 0.7s ease, transform 0.7s ease",
+              opacity: incIn ? 1 : 0,
+              transform: incIn ? "translateY(0)" : "translateY(28px)",
+              transition: "opacity .7s ease, transform .7s ease",
             }}
           >
-            {/* Animated wave overlay */}
-            <div style={{ position: "absolute", inset: 0, opacity: 0.08, pointerEvents: "none" }}>
-              <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
-                <path fill={COLORS.cyan} d="M0,96 C300,160 500,32 800,96 C1100,160 1200,64 1440,128 L1440,320 L0,320 Z" />
+            {/* wave bg */}
+            <div style={{ position: "absolute", inset: 0, opacity: 0.07, pointerEvents: "none" }}>
+              <svg viewBox="0 0 1100 200" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+                <path fill={C} d="M0,60 C300,130 600,20 900,80 C1050,110 1100,60 1100,60 L1100,200 L0,200 Z" />
               </svg>
             </div>
 
-            {/* Content */}
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-              gap: "2rem",
-              position: "relative",
-              zIndex: 2,
-            }}>
-              {/* Left side */}
-              <div>
-                <div style={{
-                  width: "3rem", height: "3rem",
-                  borderRadius: "1rem",
-                  background: `${COLORS.cyan}15`,
-                  border: `1px solid ${COLORS.cyan}25`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  marginBottom: "1rem",
-                }}>
-                  <Waves size={20} color={COLORS.cyan} />
-                </div>
-
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: `${COLORS.cyan}12`, border: `1px solid ${COLORS.cyan}20`, borderRadius: "50px", padding: "0.25rem 0.75rem", marginBottom: "1rem" }}>
-                  <Sparkles size={10} color={COLORS.cyan} />
-                  <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.6rem", fontWeight: 700, color: COLORS.cyan, letterSpacing: "2px", textTransform: "uppercase" }}>All Inclusive</span>
-                </div>
-
-                <h3 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "clamp(1.5rem, 3.5vw, 2rem)",
-                  fontWeight: 700,
-                  color: "#fff",
-                  lineHeight: 1.2,
-                  marginBottom: "0.75rem",
-                }}>
-                  What's{" "}
-                  <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Included</span>
-                </h3>
-
-                <p style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontWeight: 300,
-                  color: "rgba(255,255,255,0.55)",
-                  fontSize: "0.85rem",
-                  lineHeight: 1.6,
-                  marginBottom: "1.5rem",
-                }}>
-                  Every Wild Paddle experience is fully curated so you can focus entirely
-                  on the wildlife and the moment.
-                </p>
-
-                {/* Price badge */}
-                <div style={{
-                  display: "inline-block",
-                  background: `${COLORS.cyan}10`,
-                  border: `1px solid ${COLORS.cyan}25`,
-                  borderRadius: "1rem",
-                  padding: "0.75rem 1.25rem",
-                }}>
-                  <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.6rem", color: COLORS.lightCyan, letterSpacing: "1px", textTransform: "uppercase" }}>Starting from</span>
-                  <div style={{ fontSize: "2rem", fontWeight: 700, color: COLORS.cyan, fontFamily: "'Cormorant Garamond', serif", lineHeight: 1 }}>$89</div>
-                  <span style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.4)" }}>per person · all taxes included</span>
-                </div>
+            {/* left */}
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "7px",
+                background: "rgba(0,180,216,0.12)", border: "1px solid rgba(0,180,216,0.22)",
+                color: C, padding: "5px 14px", borderRadius: "50px",
+                fontSize: "9px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
+                fontFamily: "'Outfit', sans-serif", marginBottom: "18px",
+              }}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                All Inclusive
               </div>
-
-              {/* Right side - Included items */}
-              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                {included.map((item, i) => (
-                  <div
-                    key={i}
-                    className="included-item"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.75rem",
-                      padding: "0.75rem",
-                      borderRadius: "0.75rem",
-                      cursor: "default",
-                      transition: "all 0.3s ease",
-                    }}
-                  >
-                    <div style={{
-                      width: "2rem", height: "2rem",
-                      borderRadius: "50%",
-                      background: `${COLORS.cyan}12`,
-                      border: `1px solid ${COLORS.cyan}25`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: COLORS.cyan,
-                    }}>
-                      {item.icon}
-                    </div>
-                    <span style={{
-                      fontFamily: "'Outfit', sans-serif",
-                      fontWeight: 300,
-                      color: "rgba(255,255,255,0.85)",
-                      fontSize: "0.85rem",
-                    }}>
-                      {item.text}
-                    </span>
-                  </div>
-                ))}
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "clamp(26px,3.5vw,40px)", fontWeight: 700, color: "#fff",
+                lineHeight: 1.1, marginBottom: "14px",
+              }}>
+                What's <em style={{ color: LC, fontStyle: "italic" }}>Included</em>
+              </h3>
+              <p style={{
+                fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 300,
+                color: "rgba(255,255,255,0.5)", lineHeight: 1.8, marginBottom: "28px",
+              }}>
+                Every Wild Paddle experience is fully curated so you can focus entirely on the wildlife and the moment.
+              </p>
+              {/* price badge */}
+              <div style={{
+                display: "inline-block",
+                background: "rgba(0,180,216,0.10)", border: "1px solid rgba(0,180,216,0.22)",
+                borderRadius: "16px", padding: "14px 20px",
+              }}>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "9px", letterSpacing: "1.5px", textTransform: "uppercase", color: LC, marginBottom: "3px" }}>Starting from</div>
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "36px", fontWeight: 700, color: C, lineHeight: 1 }}>$89</div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "2px" }}>per person · all taxes included</div>
               </div>
+            </div>
+
+            {/* right — included items */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px", justifyContent: "center", position: "relative", zIndex: 1 }}>
+              {included.map((item, i) => <IncludedItem key={i} item={item} />)}
             </div>
           </div>
 
-          {/* ── Tourist Reviews Section (Eye-catching) ── */}
-          <div
-            ref={reviewsRef}
-            style={{
-              marginBottom: "3rem",
-              opacity: reviewsIn ? 1 : 0,
-              transform: reviewsIn ? "translateY(0)" : "translateY(30px)",
-              transition: "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s",
-            }}
-          >
-            <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: `${COLORS.cyan}08`, padding: "0.25rem 1rem", borderRadius: "2rem", marginBottom: "0.75rem" }}>
-                <Quote size={12} color={COLORS.cyan} />
-                <span style={{ fontSize: "0.65rem", letterSpacing: "1px", color: COLORS.navy, fontWeight: 500 }}>Loved by Travelers</span>
+          {/* ── REVIEWS ── */}
+          <div ref={revRef}>
+            <div style={{ textAlign: "center", marginBottom: "28px" }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: "7px",
+                background: "rgba(0,180,216,0.08)", border: "1px solid rgba(0,180,216,0.15)",
+                color: N, padding: "5px 16px", borderRadius: "50px",
+                fontSize: "9px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
+                fontFamily: "'Outfit', sans-serif", marginBottom: "14px",
+              }}>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Loved by Travellers
               </div>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.5rem", color: COLORS.navy }}>
-                What Our <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Adventurers</span> Say
+              <h3 style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "clamp(26px,4vw,44px)", fontWeight: 700, color: N, lineHeight: 1.1,
+              }}>
+                What Our <em style={{ color: LC, fontStyle: "italic" }}>Adventurers</em> Say
               </h3>
             </div>
 
-            <div className="reviews-container" style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "1rem",
-            }}>
-              {touristReviews.map((review, idx) => (
+            <div
+              className="td-reviews-grid"
+              style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "16px", marginBottom: "52px" }}
+            >
+              {reviews.map((rev, i) => (
                 <div
-                  key={idx}
+                  key={i}
+                  className="td-review-card"
                   style={{
-                    background: "white",
-                    borderRadius: "1.25rem",
-                    padding: "1.25rem",
-                    border: `1px solid ${COLORS.cyan}12`,
-                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                    background: "#fff",
+                    border: "1px solid rgba(27,58,107,0.07)",
+                    borderRadius: "20px",
+                    padding: "22px 20px",
+                    cursor: "default",
+                    opacity: revIn ? 1 : 0,
+                    transform: revIn ? "translateY(0)" : "translateY(28px)",
+                    transition: `opacity .6s ease ${i * 0.1}s, transform .6s ease ${i * 0.1}s`,
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.06)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
                     <div style={{
-                      width: "2.5rem", height: "2.5rem",
-                      borderRadius: "50%",
-                      background: `linear-gradient(135deg, ${COLORS.cyan}, ${COLORS.lightCyan})`,
+                      width: "36px", height: "36px", borderRadius: "50%",
+                      background: `linear-gradient(135deg, ${C}, ${LC})`,
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      color: "white",
-                      fontWeight: 600,
-                      fontSize: "0.9rem",
+                      fontSize: "14px", fontWeight: 700, color: "#fff", flexShrink: 0,
                     }}>
-                      {review.avatar}
+                      {rev.avatar}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 600, color: COLORS.navy, fontSize: "0.85rem" }}>{review.name}</div>
-                      <div style={{ fontSize: "0.65rem", color: "#8AA493" }}>{review.location} • {review.date}</div>
+                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 600, color: N }}>{rev.name}</div>
+                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "#8aabb0", marginTop: "1px" }}>{rev.loc} · {rev.date}</div>
                     </div>
                   </div>
-                  <div style={{ display: "flex", gap: "2px", marginBottom: "0.5rem" }}>
-                    {[...Array(review.rating)].map((_, i) => (
-                      <Star key={i} size={12} fill={COLORS.red} color={COLORS.red} />
-                    ))}
+                  <div style={{ display: "flex", gap: "2px", marginBottom: "8px" }}>
+                    {Array.from({ length: 5 }).map((_, j) => <StarShape key={j} />)}
                   </div>
-                  <p style={{ fontSize: "0.8rem", color: "#5A6B5E", lineHeight: 1.5, fontStyle: "italic" }}>
-                    "{review.comment}"
+                  <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "12.5px", fontWeight: 300, color: "#5a6b7a", lineHeight: 1.65, fontStyle: "italic" }}>
+                    "{rev.comment}"
                   </p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ── CTA Banner ── */}
+          {/* ── CTA BAR ── */}
           <div
+            ref={ctaRef}
+            className="td-cta-inner"
             style={{
-              background: `linear-gradient(135deg, ${COLORS.cyan}10, ${COLORS.navy}05)`,
-              borderRadius: "2rem",
-              padding: "1.5rem",
-              textAlign: "center",
-              border: `1px solid ${COLORS.cyan}15`,
-              marginBottom: "2rem",
+              background: N,
+              borderRadius: "24px",
+              padding: "36px 44px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "24px",
+              flexWrap: "wrap",
+              position: "relative",
+              overflow: "hidden",
+              opacity: ctaIn ? 1 : 0,
+              transform: ctaIn ? "translateY(0)" : "translateY(24px)",
+              transition: "opacity .7s ease, transform .7s ease",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "0.5rem" }}>
-              <Calendar size={18} color={COLORS.red} />
-              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.7rem", letterSpacing: "2px", color: COLORS.red, textTransform: "uppercase", fontWeight: 600 }}>Limited Spots Available</span>
+            {/* accent orb */}
+            <div style={{ position: "absolute", right: "-40px", top: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(0,180,216,0.06)", pointerEvents: "none" }} />
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "7px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", color: LC, marginBottom: "8px" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "tdPulse 2s infinite" }} />
+                Limited spots available
+              </div>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(22px,3vw,34px)", fontWeight: 700, color: "#fff", lineHeight: 1.1 }}>
+                Ready for the <em style={{ color: C, fontStyle: "italic" }}>experience of a lifetime?</em>
+              </div>
             </div>
-            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: COLORS.navy, marginBottom: "0.5rem" }}>
-              Ready for the <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>experience of a lifetime?</span>
-            </h3>
             <button
+              className="td-cta-btn-main"
+              style={{ position: "relative", zIndex: 1 }}
               onClick={() => document.querySelector("#booking")?.scrollIntoView({ behavior: "smooth" })}
-              style={{
-                background: `linear-gradient(135deg, ${COLORS.red}, ${COLORS.red}CC)`,
-                border: "none",
-                padding: "0.7rem 1.8rem",
-                borderRadius: "2rem",
-                color: "white",
-                fontWeight: 700,
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: "0.8rem",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                marginTop: "0.75rem",
-                transition: "transform 0.2s, box-shadow 0.2s",
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 20px ${COLORS.red}40`; }}
-              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
             >
-              Book Your Kayak Safari <Calendar size={14} />
+              Book Your Kayak Safari →
             </button>
           </div>
+
         </div>
 
-        {/* Bottom wave divider */}
-        <div style={{ marginTop: "2rem", lineHeight: 0, marginLeft: "-1.5rem", marginRight: "-1.5rem" }}>
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "60px" }}>
-            <path fill={`${COLORS.cyan}08`} d="M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z">
+        {/* ── WAVE DIVIDER ── */}
+        <div style={{ lineHeight: 0, marginTop: "72px" }}>
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "72px" }}>
+            <path fill="rgba(0,180,216,0.09)" d="M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="7s" repeatCount="indefinite"
                 values="M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z;M0,55 C400,15 900,70 1440,30 L1440,80 L0,80 Z;M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z" />
             </path>
-            <path fill="#FAF5EA" d="M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z">
+            <path fill="#1B3A6B" d="M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="9s" repeatCount="indefinite"
                 values="M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z;M0,50 C480,10 960,65 1440,25 L1440,80 L0,80 Z;M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z" />
             </path>

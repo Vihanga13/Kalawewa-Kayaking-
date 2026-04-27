@@ -94,7 +94,7 @@ export default function App() {
       <Navbar />
       <HeroSection />
       <AboutSection />
-      <UniqueValueSection jungleImg={jungleImg} elephantImg={elephantBathImg} />
+      <UniqueValueSection />
       <TourDetailsSection />
       <SafetySection />
       <GallerySection images={galleryImages} videoThumb={riverMistImg} />
