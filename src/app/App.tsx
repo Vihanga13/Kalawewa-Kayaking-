@@ -92,7 +92,7 @@ export default function App() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
       <Navbar />
-      <HeroSection heroImg={heroImg} />
+      <HeroSection />
       <AboutSection />
       <UniqueValueSection jungleImg={jungleImg} elephantImg={elephantBathImg} />
       <TourDetailsSection />
