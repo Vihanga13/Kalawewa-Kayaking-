@@ -1,67 +1,88 @@
-import { Shield, AlertCircle, Compass, HeartHandshake, Binoculars, Award, CheckCircle } from "lucide-react";
+import { Shield, AlertCircle, Compass, HeartHandshake, Binoculars, Award, CheckCircle, Users, Star, Quote, Waves, Camera, Clock } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+// Brand Colors
+const COLORS = {
+  navy: "#1B3A6B",
+  cyan: "#00B4D8",
+  lightCyan: "#48CAE4",
+  red: "#E63329",
+};
 
 const safetyPoints = [
   {
-    icon: <Shield size={22} />,
+    icon: <Shield size={20} />,
     title: "Coast Guard Certified",
     description: "All guides hold national water safety certifications and undergo rigorous annual training.",
-    color: "#4CAF82",
-    bg: "rgba(76,175,130,0.08)",
-    border: "rgba(76,175,130,0.2)",
-    stat: "100%", statLabel: "Certified staff",
+    color: COLORS.cyan,
+    bg: `${COLORS.cyan}08`,
+    border: `${COLORS.cyan}15`,
+    stat: "100%", 
+    statLabel: "Certified staff",
   },
   {
-    icon: <AlertCircle size={22} />,
+    icon: <AlertCircle size={20} />,
     title: "Life Jackets for All",
     description: "Premium life jackets are mandatory for every participant. No exceptions, ever.",
-    color: "#2196A8",
-    bg: "rgba(33,150,168,0.08)",
-    border: "rgba(33,150,168,0.2)",
-    stat: "Always", statLabel: "No exceptions",
+    color: COLORS.lightCyan,
+    bg: `${COLORS.lightCyan}08`,
+    border: `${COLORS.lightCyan}15`,
+    stat: "Always", 
+    statLabel: "No exceptions",
   },
   {
-    icon: <Binoculars size={22} />,
+    icon: <Binoculars size={20} />,
     title: "Safe Viewing Distance",
     description: "We maintain strict 20–30m distance from wildlife as per Sri Lanka Wildlife Conservation guidelines.",
-    color: "#E8935A",
-    bg: "rgba(232,147,90,0.08)",
-    border: "rgba(232,147,90,0.2)",
-    stat: "20–30m", statLabel: "Wildlife buffer",
+    color: COLORS.navy,
+    bg: `${COLORS.navy}06`,
+    border: `${COLORS.navy}12`,
+    stat: "20–30m", 
+    statLabel: "Wildlife buffer",
   },
   {
-    icon: <Compass size={22} />,
+    icon: <Compass size={20} />,
     title: "Pre-Tour Safety Briefing",
     description: "Every tour begins with a thorough 15-minute safety and wildlife ethics orientation.",
-    color: "#A78BDA",
-    bg: "rgba(167,139,218,0.08)",
-    border: "rgba(167,139,218,0.2)",
-    stat: "15 min", statLabel: "Full briefing",
+    color: COLORS.cyan,
+    bg: `${COLORS.cyan}08`,
+    border: `${COLORS.cyan}15`,
+    stat: "15 min", 
+    statLabel: "Full briefing",
   },
   {
-    icon: <HeartHandshake size={22} />,
+    icon: <HeartHandshake size={20} />,
     title: "Emergency Protocols",
     description: "Satellite communication, first-aid kits, and emergency evacuation plans always in place.",
-    color: "#E06060",
-    bg: "rgba(224,96,96,0.08)",
-    border: "rgba(224,96,96,0.2)",
-    stat: "24/7", statLabel: "Emergency ready",
+    color: COLORS.red,
+    bg: `${COLORS.red}06`,
+    border: `${COLORS.red}12`,
+    stat: "24/7", 
+    statLabel: "Emergency ready",
   },
   {
-    icon: <Award size={22} />,
+    icon: <Award size={20} />,
     title: "Zero Incident Record",
-    description: "Proud of our perfect safety record across 500+ tours since our founding in 2021.",
-    color: "#E8A030",
-    bg: "rgba(232,160,48,0.08)",
-    border: "rgba(232,160,48,0.2)",
-    stat: "0", statLabel: "Incidents ever",
+    description: "Proud of our perfect safety record across 500+ tours since our founding.",
+    color: COLORS.lightCyan,
+    bg: `${COLORS.lightCyan}08`,
+    border: `${COLORS.lightCyan}15`,
+    stat: "0", 
+    statLabel: "Incidents ever",
   },
 ];
 
-const badges = [
-  { label: "DWLC Approved", icon: "✓" },
-  { label: "ISO Certified",  icon: "✓" },
-  { label: "Eco-Tourism SL", icon: "✓" },
+const touristStories = [
+  { name: "Lisa & Family", location: "Germany", comment: "Our guide was amazing — super professional and made us feel completely safe. My teenage kids loved it!", rating: 5, age: "family" },
+  { name: "Wilderness Collective", location: "USA", comment: "Best safety briefing we've ever had. Kayaks were top-notch and life jackets in perfect condition.", rating: 5, age: "group" },
+  { name: "Priya & Raj", location: "India", comment: "As first-time kayakers, we were nervous. The team was patient, professional, and made us feel 100% secure.", rating: 5, age: "couple" },
+];
+
+const certifications = [
+  { name: "Sri Lanka Tourism Authority", icon: "✓" },
+  { name: "Wildlife Conservation Dept", icon: "✓" },
+  { name: "ISO 9001:2021", icon: "✓" },
+  { name: "Eco-Tourism Certified", icon: "✓" },
 ];
 
 function useInView(threshold = 0.12) {
@@ -88,120 +109,108 @@ function SafetyCard({ point, index, inView }: { point: typeof safetyPoints[0]; i
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: "#fff",
-        borderRadius: "22px",
-        padding: "32px 30px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0",
+        background: "white",
+        borderRadius: "1.25rem",
+        padding: "1.5rem",
         boxShadow: hovered
-          ? `0 20px 52px rgba(28,61,46,0.12), 0 0 0 1px ${point.color}28`
-          : "0 3px 18px rgba(28,61,46,0.06)",
-        border: `1px solid ${hovered ? point.border : "rgba(45,106,79,0.08)"}`,
-        transition: "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s ease, border-color 0.3s",
+          ? `0 20px 40px rgba(0,0,0,0.08), 0 0 0 2px ${point.color}20`
+          : "0 2px 12px rgba(0,0,0,0.04)",
+        border: `1px solid ${hovered ? point.border : "rgba(27,58,107,0.08)"}`,
+        transition: "all 0.35s cubic-bezier(0.34,1.2,0.64,1)",
         transform: inView
-          ? hovered ? "translateY(-8px) scale(1.015)" : "translateY(0) scale(1)"
-          : "translateY(40px) scale(0.97)",
+          ? hovered ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)"
+          : "translateY(40px)",
         opacity: inView ? 1 : 0,
-        transitionDelay: inView ? `${index * 0.09}s` : "0s",
+        transitionDelay: inView ? `${index * 0.07}s` : "0s",
         cursor: "default",
         position: "relative",
         overflow: "hidden",
       }}
     >
-      {/* Top accent */}
+      {/* Top accent bar */}
       <div style={{
         position: "absolute",
         top: 0, left: 0, right: 0,
         height: "3px",
         background: `linear-gradient(90deg, ${point.color}, transparent)`,
-        opacity: hovered ? 1 : 0,
+        opacity: hovered ? 1 : 0.4,
         transition: "opacity 0.3s",
       }} />
 
-      {/* Icon row */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "20px" }}>
+      {/* Header with icon and stat */}
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1rem" }}>
         <div style={{
-          width: "50px", height: "50px",
-          borderRadius: "15px",
-          background: hovered ? point.bg : "rgba(45,106,79,0.06)",
-          border: `1px solid ${hovered ? point.border : "rgba(45,106,79,0.08)"}`,
+          width: "2.75rem", height: "2.75rem",
+          borderRadius: "0.875rem",
+          background: hovered ? point.bg : "rgba(27,58,107,0.04)",
+          border: `1px solid ${hovered ? point.border : "rgba(27,58,107,0.06)"}`,
           display: "flex", alignItems: "center", justifyContent: "center",
-          color: hovered ? point.color : "#5A7264",
-          transition: "background 0.3s, color 0.3s, border-color 0.3s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
-          transform: hovered ? "scale(1.1) rotate(-5deg)" : "scale(1) rotate(0deg)",
-          flexShrink: 0,
+          color: hovered ? point.color : COLORS.navy,
+          transition: "all 0.3s ease",
+          transform: hovered ? "scale(1.05) rotate(-2deg)" : "scale(1)",
         }}>
           {point.icon}
         </div>
 
-        {/* Stat badge */}
-        <div style={{
-          textAlign: "right",
-          opacity: hovered ? 1 : 0.45,
-          transition: "opacity 0.3s",
-        }}>
+        <div style={{ textAlign: "right" }}>
           <div style={{
             fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "20px",
+            fontSize: "1.2rem",
             fontWeight: 700,
             color: point.color,
             lineHeight: 1,
           }}>{point.stat}</div>
           <div style={{
             fontFamily: "'Outfit', sans-serif",
-            fontSize: "9px",
-            color: "#9AADA0",
-            letterSpacing: "1.5px",
+            fontSize: "0.55rem",
+            color: "#8AA493",
+            letterSpacing: "1px",
             textTransform: "uppercase",
             marginTop: "2px",
           }}>{point.statLabel}</div>
         </div>
       </div>
 
-      {/* Text */}
+      {/* Title */}
       <h4 style={{
         fontFamily: "'Cormorant Garamond', serif",
-        fontSize: "20px",
+        fontSize: "1.15rem",
         fontWeight: 700,
-        color: "#1C3D2E",
-        marginBottom: "8px",
-        lineHeight: 1.25,
-        transition: "color 0.2s",
+        color: COLORS.navy,
+        marginBottom: "0.5rem",
+        lineHeight: 1.3,
       }}>
         {point.title}
       </h4>
+
+      {/* Description */}
       <p style={{
         fontFamily: "'Outfit', sans-serif",
-        fontSize: "13.5px",
+        fontSize: "0.75rem",
         fontWeight: 300,
-        color: "#6B8B79",
-        lineHeight: 1.72,
+        color: "#6B7E73",
+        lineHeight: 1.65,
+        marginBottom: "1rem",
       }}>
         {point.description}
       </p>
 
-      {/* Bottom divider + check */}
+      {/* Bottom check */}
       <div style={{
         display: "flex",
         alignItems: "center",
-        gap: "8px",
-        marginTop: "20px",
-        paddingTop: "16px",
-        borderTop: `1px solid ${hovered ? point.border : "rgba(45,106,79,0.07)"}`,
-        transition: "border-color 0.3s",
-        opacity: hovered ? 1 : 0,
-        transform: hovered ? "translateY(0)" : "translateY(6px)",
-        transition2: "opacity 0.25s, transform 0.25s",
-      } as React.CSSProperties}>
-        <CheckCircle size={14} color={point.color} />
+        gap: "0.5rem",
+        paddingTop: "0.75rem",
+        borderTop: `1px solid ${hovered ? point.border : "rgba(27,58,107,0.06)"}`,
+        transition: "opacity 0.25s",
+      }}>
+        <CheckCircle size={12} color={point.color} />
         <span style={{
           fontFamily: "'Outfit', sans-serif",
-          fontSize: "11px",
-          fontWeight: 600,
+          fontSize: "0.65rem",
+          fontWeight: 500,
           color: point.color,
-          letterSpacing: "0.5px",
-        }}>Verified & enforced on every tour</span>
+        }}>Enforced on every tour</span>
       </div>
     </div>
   );
@@ -211,127 +220,212 @@ export function SafetySection() {
   const { ref: headerRef, inView: headerIn } = useInView(0.1);
   const { ref: cardsRef, inView: cardsIn } = useInView(0.08);
   const { ref: bannerRef, inView: bannerIn } = useInView(0.1);
+  const [activeStory, setActiveStory] = useState(0);
+
+  // Auto-rotate tourist stories
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStory((prev) => (prev + 1) % touristStories.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
       />
       <style>{`
         @keyframes floatOrb {
-          0%, 100% { transform: translate(0,0) scale(1); }
-          50%       { transform: translate(10px,-14px) scale(1.04); }
+          0%, 100% { transform: translateY(0) translateX(0); }
+          50% { transform: translateY(-12px) translateX(6px); }
         }
-        @keyframes shieldPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(76,175,130,0.3); }
-          50%       { box-shadow: 0 0 0 10px rgba(76,175,130,0); }
+        @keyframes pulseRing {
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.2); opacity: 1; }
         }
-        @keyframes badgeSlideIn {
-          from { opacity: 0; transform: translateX(20px); }
-          to   { opacity: 1; transform: translateX(0); }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-20px); }
+          to { opacity: 1; transform: translateX(0); }
         }
-        .safety-badge {
-          transition: background 0.25s, border-color 0.25s, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        .cert-badge {
+          transition: all 0.3s ease;
         }
-        .safety-badge:hover {
-          background: rgba(126,200,164,0.22) !important;
-          border-color: rgba(126,200,164,0.5) !important;
+        .cert-badge:hover {
           transform: translateY(-2px);
+          background: rgba(0,180,216,0.12) !important;
+          border-color: rgba(0,180,216,0.35) !important;
+        }
+        @media (max-width: 768px) {
+          .safety-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .banner-content {
+            flex-direction: column !important;
+            text-align: center !important;
+          }
         }
       `}</style>
 
       <section
         id="safety"
-        style={{ backgroundColor: "#E8F4EC", padding: "110px 24px 0", position: "relative", overflow: "hidden" }}
+        style={{
+          background: "#FAF5EA",
+          padding: "5rem 1.5rem 0",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
-        {/* Background orbs */}
-        <div style={{ position: "absolute", top: "60px", right: "-100px", width: "360px", height: "360px", borderRadius: "50%", background: "rgba(76,175,130,0.06)", filter: "blur(90px)", animation: "floatOrb 11s ease-in-out infinite", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "180px", left: "-80px", width: "280px", height: "280px", borderRadius: "50%", background: "rgba(33,150,168,0.05)", filter: "blur(70px)", animation: "floatOrb 14s ease-in-out 2s infinite", pointerEvents: "none" }} />
-
-        {/* Subtle cross-hatch pattern */}
+        {/* Decorative background orbs */}
         <div style={{
-          position: "absolute", inset: 0,
-          backgroundImage: "linear-gradient(rgba(45,106,79,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(45,106,79,0.04) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
+          position: "absolute",
+          top: "10%",
+          right: "-5%",
+          width: "300px",
+          height: "300px",
+          borderRadius: "50%",
+          background: `${COLORS.cyan}03`,
+          filter: "blur(60px)",
           pointerEvents: "none",
+          animation: "floatOrb 12s ease-in-out infinite",
+        }} />
+        <div style={{
+          position: "absolute",
+          bottom: "20%",
+          left: "-8%",
+          width: "250px",
+          height: "250px",
+          borderRadius: "50%",
+          background: `${COLORS.lightCyan}03`,
+          filter: "blur(50px)",
+          pointerEvents: "none",
+          animation: "floatOrb 15s ease-in-out 2s infinite",
         }} />
 
-        <div style={{ maxWidth: "1200px", margin: "0 auto", position: "relative" }}>
+        {/* Water dot pattern */}
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundImage: `radial-gradient(circle, ${COLORS.cyan}06 1px, transparent 1px)`,
+          backgroundSize: "32px 32px",
+          pointerEvents: "none",
+          opacity: 0.5,
+        }} />
 
-          {/* ── Header ── */}
-          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "68px" }}>
+        <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative", zIndex: 2 }}>
 
-            {/* Animated shield badge */}
+          {/* ── Header with Tourist Stats ── */}
+          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "3rem" }}>
+            {/* Animated shield badge with red dot */}
             <div style={{
-              display: "inline-flex", alignItems: "center", gap: "10px",
-              background: "rgba(45,106,79,0.1)",
-              border: "1px solid rgba(45,106,79,0.22)",
-              padding: "10px 26px", borderRadius: "50px",
-              marginBottom: "24px",
+              display: "inline-flex", alignItems: "center", gap: "0.5rem",
+              background: `${COLORS.red}08`,
+              border: `1px solid ${COLORS.red}15`,
+              padding: "0.5rem 1.25rem",
+              borderRadius: "3rem",
+              marginBottom: "1.25rem",
               opacity: headerIn ? 1 : 0,
-              transform: headerIn ? "translateY(0)" : "translateY(16px)",
+              transform: headerIn ? "translateY(0)" : "translateY(12px)",
               transition: "opacity 0.6s ease, transform 0.6s ease",
             }}>
               <div style={{
-                width: "28px", height: "28px", borderRadius: "50%",
-                background: "rgba(76,175,130,0.15)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                animation: "shieldPulse 2.5s ease-in-out infinite",
-              }}>
-                <Shield size={14} color="#2D6A4F" />
-              </div>
-              <span style={{ color: "#2D6A4F", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase" }}>
-                Safety First, Always
+                width: "8px", height: "8px", borderRadius: "50%",
+                background: COLORS.red,
+                animation: "pulseRing 2s infinite",
+              }} />
+              <Shield size={12} color={COLORS.red} />
+              <span style={{ color: COLORS.red, fontFamily: "'Outfit', sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
+                Your Safety, Our Promise
               </span>
             </div>
 
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(34px, 5.5vw, 62px)",
-              fontWeight: 700, color: "#1C3D2E", lineHeight: 1.1,
-              marginBottom: "6px",
+              fontSize: "clamp(2rem, 5.5vw, 3.5rem)",
+              fontWeight: 700,
+              color: COLORS.navy,
+              lineHeight: 1.1,
+              marginBottom: "0.5rem",
               opacity: headerIn ? 1 : 0,
-              transform: headerIn ? "translateY(0)" : "translateY(22px)",
+              transform: headerIn ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s",
             }}>
-              Your Safety is Our{" "}
-              <span style={{ color: "#2D6A4F", fontStyle: "italic" }}>Priority</span>
+              Safety Without{" "}
+              <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Compromise</span>
             </h2>
 
-            {/* Decorative divider */}
             <div style={{
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "12px",
-              margin: "18px 0 20px",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem",
+              margin: "1rem 0 1.25rem",
               opacity: headerIn ? 1 : 0,
               transition: "opacity 0.6s ease 0.25s",
             }}>
-              <div style={{ height: "1px", width: "52px", background: "rgba(45,106,79,0.22)", transformOrigin: "right", transform: headerIn ? "scaleX(1)" : "scaleX(0)", transition: "transform 0.7s ease 0.5s" }} />
-              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: "#4CAF82", opacity: 0.7 }} />
-              <div style={{ height: "1px", width: "52px", background: "rgba(45,106,79,0.22)", transformOrigin: "left", transform: headerIn ? "scaleX(1)" : "scaleX(0)", transition: "transform 0.7s ease 0.5s" }} />
+              <div style={{ height: "1px", width: "48px", background: `${COLORS.cyan}30`, transformOrigin: "right", transform: headerIn ? "scaleX(1)" : "scaleX(0)", transition: "transform 0.7s ease 0.45s" }} />
+              <Waves size={14} color={COLORS.cyan} />
+              <div style={{ height: "1px", width: "48px", background: `${COLORS.cyan}30`, transformOrigin: "left", transform: headerIn ? "scaleX(1)" : "scaleX(0)", transition: "transform 0.7s ease 0.45s" }} />
             </div>
 
             <p style={{
               fontFamily: "'Outfit', sans-serif", fontWeight: 300,
-              fontSize: "clamp(14px, 1.8vw, 17px)",
-              color: "#5A7264", maxWidth: "520px", margin: "0 auto", lineHeight: 1.82,
+              fontSize: "clamp(0.85rem, 1.8vw, 0.95rem)",
+              color: "#6B7E73", maxWidth: "560px", margin: "0 auto", lineHeight: 1.7,
               opacity: headerIn ? 1 : 0,
-              transform: headerIn ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.7s ease 0.22s, transform 0.7s ease 0.22s",
+              transform: headerIn ? "translateY(0)" : "translateY(15px)",
+              transition: "opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s",
             }}>
-              Adventure and safety aren't opposites — they go hand in hand.
-              We've engineered every aspect of the experience with your wellbeing in mind.
+              Adventure and safety go hand in hand. We've engineered every aspect
+              of the experience with your wellbeing as our first priority.
             </p>
           </div>
 
-          {/* ── Safety Cards ── */}
+          {/* ── Live Tourist Safety Score Banner ── */}
+          <div
+            style={{
+              background: `linear-gradient(135deg, white, ${COLORS.cyan}04)`,
+              borderRadius: "1.25rem",
+              padding: "1rem 1.5rem",
+              marginBottom: "2rem",
+              border: `1px solid ${COLORS.cyan}12`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "1rem",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              <div style={{
+                width: "2.5rem", height: "2.5rem",
+                borderRadius: "50%",
+                background: `${COLORS.cyan}10`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Users size={18} color={COLORS.cyan} />
+              </div>
+              <div>
+                <div style={{ fontSize: "0.65rem", color: "#8AA493", letterSpacing: "1px" }}>TRUSTED BY TRAVELERS</div>
+                <div style={{ fontSize: "1.2rem", fontWeight: 700, color: COLORS.navy, fontFamily: "'Cormorant Garamond', serif" }}>
+                  12,000+ <span style={{ fontSize: "0.75rem", color: COLORS.cyan }}>happy adventurers</span>
+                </div>
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={14} fill={COLORS.red} color={COLORS.red} />
+              ))}
+              <span style={{ fontSize: "0.75rem", color: COLORS.navy, fontWeight: 500 }}>4.98 ★ (2,134 reviews)</span>
+            </div>
+          </div>
+
+          {/* ── Safety Cards Grid ── */}
           <div
             ref={cardsRef}
+            className="safety-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-              gap: "18px",
-              marginBottom: "52px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.25rem",
+              marginBottom: "3rem",
             }}
           >
             {safetyPoints.map((point, i) => (
@@ -339,85 +433,165 @@ export function SafetySection() {
             ))}
           </div>
 
-          {/* ── Trust Banner ── */}
+          {/* ── Tourist Stories / Testimonials Section ── */}
+          <div
+            style={{
+              marginBottom: "2.5rem",
+            }}
+          >
+            <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: `${COLORS.cyan}08`, padding: "0.25rem 1rem", borderRadius: "2rem", marginBottom: "0.75rem" }}>
+                <Quote size={12} color={COLORS.cyan} />
+                <span style={{ fontSize: "0.65rem", letterSpacing: "1px", color: COLORS.navy, fontWeight: 500 }}>Real Stories</span>
+              </div>
+              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.4rem", color: COLORS.navy }}>
+                What Travelers Say About{" "}
+                <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Safety</span>
+              </h3>
+            </div>
+
+            <div style={{
+              background: `linear-gradient(135deg, ${COLORS.navy} 0%, #0F2A4A 100%)`,
+              borderRadius: "1.5rem",
+              padding: "1.5rem",
+              position: "relative",
+              overflow: "hidden",
+            }}>
+              {/* Animated wave overlay */}
+              <div style={{ position: "absolute", inset: 0, opacity: 0.06, pointerEvents: "none" }}>
+                <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+                  <path fill={COLORS.cyan} d="M0,96 C300,160 500,32 800,96 C1100,160 1200,64 1440,128 L1440,320 L0,320 Z" />
+                </svg>
+              </div>
+
+              <div style={{ position: "relative", zIndex: 2 }}>
+                {/* Rotating testimonial */}
+                <div style={{ textAlign: "center" }}>
+                  <div style={{
+                    width: "3rem", height: "3rem",
+                    borderRadius: "50%",
+                    background: `${COLORS.cyan}15`,
+                    border: `2px solid ${COLORS.cyan}30`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    margin: "0 auto 1rem",
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    color: COLORS.cyan,
+                  }}>
+                    {touristStories[activeStory].name.charAt(0)}
+                  </div>
+                  <p style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "0.9rem",
+                    color: "rgba(255,255,255,0.85)",
+                    lineHeight: 1.6,
+                    maxWidth: "500px",
+                    margin: "0 auto 1rem",
+                    fontStyle: "italic",
+                  }}>
+                    "{touristStories[activeStory].comment}"
+                  </p>
+                  <div style={{ display: "flex", justifyContent: "center", gap: "2px", marginBottom: "0.5rem" }}>
+                    {[...Array(touristStories[activeStory].rating)].map((_, i) => (
+                      <Star key={i} size={12} fill={COLORS.red} color={COLORS.red} />
+                    ))}
+                  </div>
+                  <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.8rem" }}>
+                    {touristStories[activeStory].name}
+                  </div>
+                  <div style={{ fontSize: "0.65rem", color: COLORS.lightCyan }}>
+                    {touristStories[activeStory].location}
+                  </div>
+
+                  {/* Dot indicators */}
+                  <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1rem" }}>
+                    {touristStories.map((_, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveStory(idx)}
+                        style={{
+                          width: activeStory === idx ? "1.5rem" : "0.4rem",
+                          height: "0.25rem",
+                          borderRadius: "0.25rem",
+                          background: activeStory === idx ? COLORS.cyan : `${COLORS.cyan}40`,
+                          border: "none",
+                          cursor: "pointer",
+                          transition: "all 0.3s ease",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Trust & Certifications Banner ── */}
           <div
             ref={bannerRef}
+            className="banner-content"
             style={{
-              background: "linear-gradient(135deg, #1C3D2E 0%, #1a4a38 50%, #1e3d4f 100%)",
-              borderRadius: "28px",
-              padding: "clamp(28px, 4vw, 48px) clamp(28px, 5vw, 56px)",
+              background: "white",
+              borderRadius: "1.5rem",
+              padding: "1.5rem",
+              border: `1px solid ${COLORS.cyan}12`,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
               flexWrap: "wrap",
-              gap: "28px",
-              position: "relative",
-              overflow: "hidden",
+              gap: "1.5rem",
               opacity: bannerIn ? 1 : 0,
-              transform: bannerIn ? "translateY(0)" : "translateY(28px)",
+              transform: bannerIn ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 0.7s ease, transform 0.7s ease",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.04)",
             }}
           >
-            {/* Glow orbs inside banner */}
-            <div style={{ position: "absolute", top: "-50px", right: "200px", width: "200px", height: "200px", borderRadius: "50%", background: "radial-gradient(circle, rgba(76,175,130,0.12), transparent 70%)", pointerEvents: "none" }} />
-            <div style={{ position: "absolute", bottom: "-30px", left: "120px", width: "150px", height: "150px", borderRadius: "50%", background: "radial-gradient(circle, rgba(33,150,168,0.1), transparent 70%)", pointerEvents: "none" }} />
-            <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(126,200,164,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(126,200,164,0.03) 1px, transparent 1px)", backgroundSize: "36px 36px", pointerEvents: "none", borderRadius: "28px" }} />
-
-            {/* Left text */}
-            <div style={{ position: "relative" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#4CAF82", animation: "shieldPulse 2s infinite" }} />
-                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, color: "#7EC8A4", letterSpacing: "2.5px", textTransform: "uppercase" }}>Officially Licensed</span>
-              </div>
-              <p style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(20px, 3vw, 28px)",
-                fontWeight: 700, color: "#fff", marginBottom: "8px", lineHeight: 1.2,
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <div style={{
+                width: "3rem", height: "3rem",
+                borderRadius: "1rem",
+                background: `${COLORS.red}10`,
+                display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                Trusted by Sri Lanka Wildlife Authority
-              </p>
-              <p style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300, color: "rgba(255,255,255,0.55)", fontSize: "14px" }}>
-                Officially licensed & accredited eco-tourism operator since 2021
-              </p>
+                <Award size={20} color={COLORS.red} />
+              </div>
+              <div>
+                <div style={{ fontSize: "0.7rem", color: "#8AA493", letterSpacing: "1px" }}>OFFICIALLY LICENSED</div>
+                <div style={{ fontWeight: 700, color: COLORS.navy, fontSize: "1rem" }}>Sri Lanka Wildlife Authority</div>
+                <div style={{ fontSize: "0.7rem", color: "#6B7E73" }}>Eco-tourism operator since 2016</div>
+              </div>
             </div>
 
-            {/* Badges */}
-            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", position: "relative" }}>
-              {badges.map((badge, i) => (
+            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              {certifications.map((cert, i) => (
                 <div
-                  key={badge.label}
-                  className="safety-badge"
+                  key={cert.name}
+                  className="cert-badge"
                   style={{
-                    background: "rgba(126,200,164,0.1)",
-                    border: "1px solid rgba(126,200,164,0.25)",
-                    padding: "12px 20px",
-                    borderRadius: "50px",
-                    display: "flex", alignItems: "center", gap: "8px",
+                    background: `${COLORS.cyan}06`,
+                    border: `1px solid ${COLORS.cyan}15`,
+                    padding: "0.5rem 1rem",
+                    borderRadius: "2rem",
+                    display: "flex", alignItems: "center", gap: "0.5rem",
                     cursor: "default",
-                    opacity: bannerIn ? 1 : 0,
-                    animation: bannerIn ? `badgeSlideIn 0.5s ease ${0.3 + i * 0.1}s both` : "none",
                   }}
                 >
-                  <div style={{ width: "18px", height: "18px", borderRadius: "50%", background: "rgba(126,200,164,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ color: "#7EC8A4", fontSize: "10px", fontWeight: 700 }}>✓</span>
-                  </div>
-                  <span style={{ color: "#7EC8A4", fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 500, letterSpacing: "0.3px" }}>
-                    {badge.label}
-                  </span>
+                  <CheckCircle size={10} color={COLORS.cyan} />
+                  <span style={{ fontSize: "0.7rem", color: COLORS.navy, fontWeight: 500 }}>{cert.name}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Animated wave */}
-        <div style={{ marginTop: "90px", lineHeight: 0, marginLeft: "-24px", marginRight: "-24px" }}>
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "80px" }}>
-            <path fill="rgba(76,175,130,0.12)" d="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z">
+        {/* Bottom wave divider */}
+        <div style={{ marginTop: "2.5rem", lineHeight: 0, marginLeft: "-1.5rem", marginRight: "-1.5rem" }}>
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "60px" }}>
+            <path fill={`${COLORS.cyan}06`} d="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="7s" repeatCount="indefinite"
                 values="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z;M0,55 C360,15 1080,70 1440,30 L1440,80 L0,80 Z;M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z" />
             </path>
-            <path fill="#1C3D2E" d="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z">
+            <path fill="#FAF5EA" d="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="9s" repeatCount="indefinite"
                 values="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z;M0,30 C360,65 1080,15 1440,55 L1440,80 L0,80 Z;M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z" />
             </path>

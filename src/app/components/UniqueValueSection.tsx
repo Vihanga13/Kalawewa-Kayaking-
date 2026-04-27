@@ -1,5 +1,13 @@
-import { X, Check, Leaf, Zap } from "lucide-react";
+import { X, Check, Leaf, Zap, Waves, Compass, Shield, Eye, Droplet, Users, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+
+// Brand Colors
+const COLORS = {
+  navy: "#1B3A6B",
+  cyan: "#00B4D8",
+  lightCyan: "#48CAE4",
+  red: "#E63329",
+};
 
 const comparisons = [
   {
@@ -28,6 +36,13 @@ const comparisons = [
   },
 ];
 
+// Tourist testimonials for immersive feel
+const touristMoments = [
+  { name: "Lisa & Team", location: "Germany", quote: "We were 15 meters from a bathing elephant family. They didn't even glance at us — pure magic.", avatar: "🇩🇪" },
+  { name: "Raj & Priya", location: "India", quote: "Finally a wildlife experience that respects animals. Our guide knew every elephant by name.", avatar: "🇮🇳" },
+  { name: "Wilderness Collective", location: "USA", quote: "Best thing we did in Sri Lanka. Sunrise kayak with mist rising — unforgettable.", avatar: "🇺🇸" },
+];
+
 function useInView(threshold = 0.12) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
@@ -53,8 +68,18 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
   const { ref: headerRef, inView: headerIn } = useInView(0.1);
   const { ref: tableRef, inView: tableIn } = useInView(0.1);
   const { ref: imgsRef, inView: imgsIn } = useInView(0.1);
+  const { ref: momentsRef, inView: momentsIn } = useInView(0.1);
   const [activeRow, setActiveRow] = useState<number | null>(null);
   const [imgHover, setImgHover] = useState<number | null>(null);
+  const [activeMoment, setActiveMoment] = useState(0);
+
+  // Auto-rotate tourist moments
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveMoment((prev) => (prev + 1) % touristMoments.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -75,140 +100,273 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
           from { opacity: 0; transform: translateX(40px); }
           to   { opacity: 1; transform: translateX(0); }
         }
-        @keyframes rowReveal {
-          from { opacity: 0; transform: translateX(-12px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes pulseRing {
-          0%   { transform: scale(1);   opacity: 0.4; }
-          100% { transform: scale(2.2); opacity: 0; }
+        @keyframes ripplePulse {
+          0% { transform: scale(0.8); opacity: 0.5; }
+          100% { transform: scale(2); opacity: 0; }
         }
         @keyframes floatOrb {
           0%, 100% { transform: translate(0, 0) scale(1); }
-          33%       { transform: translate(12px, -18px) scale(1.05); }
-          66%       { transform: translate(-8px, 10px) scale(0.97); }
+          33% { transform: translate(15px, -20px) scale(1.05); }
+          66% { transform: translate(-10px, 12px) scale(0.97); }
         }
         @keyframes shimmerLine {
-          0%   { left: -100%; }
+          0% { left: -100%; }
           100% { left: 100%; }
         }
-        .uv-row { transition: background 0.22s, transform 0.22s; }
-        .uv-row:hover { background: rgba(255,255,255,0.03); transform: scaleX(1.005); }
-        .uv-img-card { transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease; }
-        .uv-img-card:hover { transform: scale(1.025) translateY(-6px); box-shadow: 0 32px 80px rgba(0,0,0,0.4); }
+        @keyframes waveSway {
+          0%, 100% { transform: translateX(0) translateY(0); }
+          50% { transform: translateX(-8px) translateY(5px); }
+        }
+        @keyframes waterRise {
+          0% { opacity: 0; transform: translateY(20px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .uv-row {
+          transition: background 0.22s, transform 0.22s;
+        }
+        .uv-row:hover {
+          background: rgba(0,180,216,0.04);
+          transform: scaleX(1.002);
+        }
+        .uv-img-card {
+          transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease;
+        }
+        .uv-img-card:hover {
+          transform: scale(1.02) translateY(-6px);
+          box-shadow: 0 32px 60px rgba(0,0,0,0.3);
+        }
+        @media (max-width: 768px) {
+          .comparison-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .vs-divider {
+            display: none;
+          }
+          .comparison-row {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+          }
+          .con-side, .pro-side {
+            border-radius: 1rem !important;
+          }
+        }
       `}</style>
 
       <section
         id="unique-value"
-        style={{ backgroundColor: "#1C3D2E", padding: "110px 24px 0", position: "relative", overflow: "hidden" }}
+        style={{
+          background: `linear-gradient(135deg, ${COLORS.navy} 0%, #0F2A4A 100%)`,
+          padding: "5rem 1.5rem 0",
+          position: "relative",
+          overflow: "hidden",
+        }}
       >
-        {/* Background orbs */}
-        <div style={{ position: "absolute", top: "80px", left: "-120px", width: "380px", height: "380px", borderRadius: "50%", background: "rgba(76,175,130,0.05)", filter: "blur(80px)", animation: "floatOrb 12s ease-in-out infinite", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: "200px", right: "-100px", width: "300px", height: "300px", borderRadius: "50%", background: "rgba(33,150,168,0.06)", filter: "blur(70px)", animation: "floatOrb 15s ease-in-out 3s infinite", pointerEvents: "none" }} />
+        {/* Background animated orbs - water/cyan theme */}
+        <div style={{ position: "absolute", top: "80px", left: "-120px", width: "380px", height: "380px", borderRadius: "50%", background: `${COLORS.cyan}06`, filter: "blur(80px)`, animation: 'floatOrb 14s ease-in-out infinite", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "200px", right: "-100px", width: "320px", height: "320px", borderRadius: "50%", background: `${COLORS.lightCyan}05`, filter: "blur(70px)`, animation: 'floatOrb 18s ease-in-out 4s infinite", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", top: "40%", left: "20%", width: "200px", height: "200px", borderRadius: "50%", background: `${COLORS.red}03`, filter: "blur(60px)`, animation: 'floatOrb 12s ease-in-out 2s infinite", pointerEvents: "none" }} />
 
-        {/* Decorative grid lines */}
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(126,200,164,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(126,200,164,0.03) 1px, transparent 1px)", backgroundSize: "60px 60px", pointerEvents: "none" }} />
+        {/* Water ripple effects */}
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              left: `${10 + (i * 9)}%`,
+              bottom: `${20 + (i * 5)}%`,
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              border: `1px solid ${COLORS.cyan}10`,
+              animation: `ripplePulse ${4 + i * 0.5}s infinite`,
+              animationDelay: `${i * 0.5}s`,
+              pointerEvents: "none",
+            }}
+          />
+        ))}
 
-        <div style={{ maxWidth: "1160px", margin: "0 auto" }}>
+        {/* Decorative wave lines at top */}
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "60px", opacity: 0.3 }}>
+          <svg viewBox="0 0 1440 60" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+            <path fill="none" stroke={COLORS.cyan} strokeWidth="0.5" d="M0,30 C300,10 600,50 900,30 C1200,10 1350,40 1440,25" />
+            <path fill="none" stroke={COLORS.lightCyan} strokeWidth="0.3" d="M0,40 C250,20 550,60 850,35 C1150,10 1320,50 1440,30" />
+          </svg>
+        </div>
 
-          {/* ── Header ── */}
-          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "72px" }}>
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: "8px",
-              background: "rgba(126,200,164,0.1)", color: "#7EC8A4",
-              padding: "7px 20px", borderRadius: "50px",
-              fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase",
-              fontFamily: "'Outfit', sans-serif",
-              border: "1px solid rgba(126,200,164,0.2)", marginBottom: "22px",
-              opacity: headerIn ? 1 : 0, transform: headerIn ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity 0.6s ease, transform 0.6s ease",
-            }}>
-              <Zap size={12} color="#7EC8A4" />
-              Why Choose Us
+        <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative", zIndex: 2 }}>
+
+          {/* ── Header with tourist connection ── */}
+          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <div
+              style={{
+                display: "inline-flex", alignItems: "center", gap: "8px",
+                background: `${COLORS.cyan}12`,
+                color: COLORS.cyan,
+                padding: "0.5rem 1.5rem",
+                borderRadius: "50px",
+                fontSize: "0.7rem", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase",
+                fontFamily: "'Outfit', sans-serif",
+                border: `1px solid ${COLORS.cyan}25`,
+                marginBottom: "1.5rem",
+                opacity: headerIn ? 1 : 0,
+                transform: headerIn ? "translateY(0)" : "translateY(16px)",
+                transition: "opacity 0.6s ease, transform 0.6s ease",
+              }}
+            >
+              <Zap size={12} color={COLORS.cyan} />
+              What Travelers Say
             </div>
 
-            <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(34px, 5.5vw, 62px)",
-              fontWeight: 700, color: "#fff", lineHeight: 1.08,
-              marginBottom: "18px",
-              opacity: headerIn ? 1 : 0, transform: headerIn ? "translateY(0)" : "translateY(22px)",
-              transition: "opacity 0.7s ease 0.12s, transform 0.7s ease 0.12s",
-            }}>
+            <h2
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "clamp(2rem, 5.5vw, 3.8rem)",
+                fontWeight: 700,
+                color: "#fff",
+                lineHeight: 1.1,
+                marginBottom: "1rem",
+                opacity: headerIn ? 1 : 0,
+                transform: headerIn ? "translateY(0)" : "translateY(22px)",
+                transition: "opacity 0.7s ease 0.12s, transform 0.7s ease 0.12s",
+              }}
+            >
               Beyond the{" "}
-              <span style={{ color: "#7EC8A4", fontStyle: "italic" }}>Ordinary Safari</span>
+              <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Ordinary Safari</span>
             </h2>
 
-            <p style={{
-              fontFamily: "'Outfit', sans-serif", fontWeight: 300,
-              color: "rgba(255,255,255,0.55)", fontSize: "clamp(14px, 1.8vw, 17px)",
-              maxWidth: "520px", margin: "0 auto", lineHeight: 1.8,
-              opacity: headerIn ? 1 : 0, transform: headerIn ? "translateY(0)" : "translateY(18px)",
-              transition: "opacity 0.7s ease 0.22s, transform 0.7s ease 0.22s",
-            }}>
+            <p
+              style={{
+                fontFamily: "'Outfit', sans-serif", fontWeight: 300,
+                color: "rgba(255,255,255,0.65)", fontSize: "clamp(0.85rem, 1.8vw, 1rem)",
+                maxWidth: "560px", margin: "0 auto", lineHeight: 1.7,
+                opacity: headerIn ? 1 : 0,
+                transform: headerIn ? "translateY(0)" : "translateY(18px)",
+                transition: "opacity 0.7s ease 0.22s, transform 0.7s ease 0.22s",
+              }}
+            >
               Traditional safaris take you close.{" "}
-              <em style={{ color: "#7EC8A4", fontStyle: "italic" }}>Wild Paddle takes you into</em>{" "}
-              the experience.
+              <em style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Wild Paddle takes you into</em>{" "}
+              the heart of elephant country — silently, respectfully, memorably.
             </p>
           </div>
 
-          {/* ── Comparison Table ── */}
-          <div ref={tableRef} style={{ marginBottom: "72px" }}>
+          {/* ── Immersive Tourist Moment Banner ── */}
+          <div
+            ref={momentsRef}
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.navy}80, ${COLORS.navy}40)`,
+              backdropFilter: "blur(12px)",
+              borderRadius: "1.5rem",
+              padding: "1.5rem 2rem",
+              marginBottom: "3rem",
+              border: `1px solid ${COLORS.cyan}20`,
+              opacity: momentsIn ? 1 : 0,
+              transform: momentsIn ? "translateY(0)" : "translateY(30px)",
+              transition: "all 0.7s ease",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexWrap: "wrap", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flex: "1" }}>
+                <div style={{
+                  width: "3rem", height: "3rem", borderRadius: "3rem",
+                  background: `${COLORS.cyan}20`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "1.5rem",
+                }}>
+                  {touristMoments[activeMoment].avatar}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 600, color: "#fff", fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                    {touristMoments[activeMoment].name}
+                    <span style={{ fontSize: "0.7rem", color: COLORS.lightCyan }}>• {touristMoments[activeMoment].location}</span>
+                  </div>
+                  <p style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.75)", marginTop: "0.25rem", fontStyle: "italic", maxWidth: "500px" }}>
+                    "{touristMoments[activeMoment].quote}"
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: "0.5rem" }}>
+                {touristMoments.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveMoment(idx)}
+                    style={{
+                      width: activeMoment === idx ? "2rem" : "0.5rem",
+                      height: "0.25rem",
+                      borderRadius: "0.25rem",
+                      background: activeMoment === idx ? COLORS.cyan : `${COLORS.cyan}40`,
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
 
-            {/* Column headers */}
-            <div style={{
-              display: "grid", gridTemplateColumns: "1fr auto 1fr",
-              gap: "0", marginBottom: "4px",
+          {/* ── Comparison Table (Mobile Responsive) ── */}
+          <div ref={tableRef} style={{ marginBottom: "4rem" }}>
+
+            {/* Column headers - hidden on mobile, shown as labels inside cards */}
+            <div className="comparison-grid" style={{
+              display: "grid",
+              gridTemplateColumns: "1fr auto 1fr",
+              gap: "0",
+              marginBottom: "4px",
               opacity: tableIn ? 1 : 0,
               transition: "opacity 0.6s ease 0.1s",
             }}>
-              <div style={{
-                background: "rgba(255,100,100,0.06)",
-                border: "1px solid rgba(255,100,100,0.15)",
+              {/* Traditional Safari Header - hide on mobile, show as inline labels */}
+              <div className="traditional-header" style={{
+                background: `${COLORS.red}08`,
+                border: `1px solid ${COLORS.red}20`,
                 borderBottom: "none",
-                borderRadius: "20px 20px 0 0",
-                padding: "22px 32px 18px",
+                borderRadius: "1.25rem 1.25rem 0 0",
+                padding: "1rem 1.5rem",
               }}>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(255,100,100,0.1)", border: "1px solid rgba(255,100,100,0.2)", borderRadius: "50px", padding: "5px 14px", marginBottom: "10px" }}>
-                  <X size={12} color="#FF6B6B" />
-                  <span style={{ color: "#FF6B6B", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Traditional Safari</span>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: `${COLORS.red}15`, border: `1px solid ${COLORS.red}30`, borderRadius: "50px", padding: "0.25rem 0.75rem", marginBottom: "6px" }}>
+                  <X size={10} color={COLORS.red} />
+                  <span style={{ color: COLORS.red, fontFamily: "'Outfit', sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Traditional</span>
                 </div>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "22px", color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>The Old Way</h3>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", color: "rgba(255,255,255,0.45)", fontWeight: 600 }}>Jeep Safari</h3>
               </div>
 
               {/* VS divider */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 16px", zIndex: 2 }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#1C3D2E", border: "2px solid rgba(126,200,164,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "13px", fontWeight: 700, color: "#7EC8A4", letterSpacing: "0.5px" }}>VS</span>
+              <div className="vs-divider" style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0 1rem", zIndex: 2 }}>
+                <div style={{ width: "2.5rem", height: "2.5rem", borderRadius: "50%", background: COLORS.navy, border: `2px solid ${COLORS.cyan}30`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.75rem", fontWeight: 700, color: COLORS.cyan, letterSpacing: "0.5px" }}>VS</span>
                 </div>
               </div>
 
-              <div style={{
-                background: "linear-gradient(135deg, rgba(76,175,130,0.1), rgba(33,150,168,0.08))",
-                border: "1px solid rgba(126,200,164,0.25)",
+              {/* Wild Paddle Header */}
+              <div className="paddle-header" style={{
+                background: `linear-gradient(135deg, ${COLORS.cyan}08, ${COLORS.lightCyan}05)`,
+                border: `1px solid ${COLORS.cyan}25`,
                 borderBottom: "none",
-                borderRadius: "20px 20px 0 0",
-                padding: "22px 32px 18px",
-                position: "relative", overflow: "hidden",
+                borderRadius: "1.25rem 1.25rem 0 0",
+                padding: "1rem 1.5rem",
+                position: "relative",
+                overflow: "hidden",
               }}>
-                {/* Shimmer line */}
-                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: "linear-gradient(90deg, transparent, #7EC8A4, transparent)", overflow: "hidden" }}>
-                  <div style={{ position: "absolute", top: 0, bottom: 0, width: "60%", background: "rgba(255,255,255,0.4)", animation: "shimmerLine 2.5s ease-in-out infinite" }} />
+                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: `linear-gradient(90deg, transparent, ${COLORS.cyan}, transparent)`, overflow: "hidden" }}>
+                  <div style={{ position: "absolute", top: 0, bottom: 0, width: "60%", background: "rgba(255,255,255,0.3)", animation: "shimmerLine 2.5s ease-in-out infinite" }} />
                 </div>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(76,175,130,0.15)", border: "1px solid rgba(126,200,164,0.35)", borderRadius: "50px", padding: "5px 14px", marginBottom: "10px" }}>
-                  <Leaf size={12} color="#7EC8A4" />
-                  <span style={{ color: "#7EC8A4", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Wild Paddle Eco-Tour</span>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: `${COLORS.cyan}15`, border: `1px solid ${COLORS.cyan}35`, borderRadius: "50px", padding: "0.25rem 0.75rem", marginBottom: "6px" }}>
+                  <Leaf size={10} color={COLORS.cyan} />
+                  <span style={{ color: COLORS.cyan, fontFamily: "'Outfit', sans-serif", fontSize: "0.6rem", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Wild Paddle</span>
                 </div>
-                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "22px", color: "#fff", fontWeight: 600 }}>The Wild Paddle Way</h3>
+                <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.2rem", color: "#fff", fontWeight: 600 }}>Kayak Safari</h3>
               </div>
             </div>
 
             {/* Rows */}
-            <div style={{ borderRadius: "0 0 20px 20px", overflow: "hidden" }}>
+            <div style={{ borderRadius: "0 0 1.25rem 1.25rem", overflow: "hidden" }}>
               {comparisons.map((row, i) => (
                 <div
                   key={i}
-                  className="uv-row"
+                  className="uv-row comparison-row"
                   onMouseEnter={() => setActiveRow(i)}
                   onMouseLeave={() => setActiveRow(null)}
                   style={{
@@ -222,58 +380,58 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
                   }}
                 >
                   {/* Con side */}
-                  <div style={{
-                    background: activeRow === i ? "rgba(255,100,100,0.05)" : "rgba(255,100,100,0.03)",
-                    border: "1px solid rgba(255,100,100,0.1)",
+                  <div className="con-side" style={{
+                    background: activeRow === i ? `${COLORS.red}08` : `${COLORS.red}04`,
+                    border: `1px solid ${COLORS.red}12`,
                     borderTop: "none", borderRight: "none",
-                    padding: "18px 28px",
-                    display: "flex", alignItems: "center", gap: "14px",
+                    padding: "1rem 1.25rem",
+                    display: "flex", alignItems: "center", gap: "12px",
                     transition: "background 0.2s",
                   }}>
                     <div style={{
-                      width: "26px", height: "26px", borderRadius: "50%",
-                      background: "rgba(255,100,100,0.1)",
-                      border: "1px solid rgba(255,100,100,0.2)",
+                      width: "1.75rem", height: "1.75rem", borderRadius: "50%",
+                      background: `${COLORS.red}15`,
+                      border: `1px solid ${COLORS.red}25`,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       flexShrink: 0,
                       transition: "transform 0.2s",
                       transform: activeRow === i ? "scale(1.1)" : "scale(1)",
                     }}>
-                      <X size={11} color="#FF6B6B" />
+                      <X size={10} color={COLORS.red} />
                     </div>
-                    <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300, fontSize: "14px", color: "rgba(255,255,255,0.45)", lineHeight: 1.5 }}>
+                    <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300, fontSize: "0.8rem", color: "rgba(255,255,255,0.55)", lineHeight: 1.45 }}>
                       {row.con}
                     </span>
                   </div>
 
                   {/* Center line */}
-                  <div style={{ width: "1px", background: "rgba(126,200,164,0.12)", position: "relative" }}>
+                  <div className="vs-divider-mobile" style={{ width: "1px", background: `${COLORS.cyan}15`, position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     {activeRow === i && (
-                      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: "8px", height: "8px", borderRadius: "50%", background: "#7EC8A4" }} />
+                      <div style={{ position: "absolute", width: "6px", height: "6px", borderRadius: "50%", background: COLORS.cyan }} />
                     )}
                   </div>
 
                   {/* Pro side */}
-                  <div style={{
-                    background: activeRow === i ? "rgba(76,175,130,0.08)" : "rgba(76,175,130,0.03)",
-                    border: "1px solid rgba(126,200,164,0.12)",
+                  <div className="pro-side" style={{
+                    background: activeRow === i ? `${COLORS.cyan}08` : `${COLORS.cyan}04`,
+                    border: `1px solid ${COLORS.cyan}15`,
                     borderTop: "none", borderLeft: "none",
-                    padding: "18px 28px",
-                    display: "flex", alignItems: "center", gap: "14px",
+                    padding: "1rem 1.25rem",
+                    display: "flex", alignItems: "center", gap: "12px",
                     transition: "background 0.2s",
                   }}>
                     <div style={{
-                      width: "26px", height: "26px", borderRadius: "50%",
-                      background: "rgba(76,175,130,0.15)",
-                      border: "1px solid rgba(126,200,164,0.3)",
+                      width: "1.75rem", height: "1.75rem", borderRadius: "50%",
+                      background: `${COLORS.cyan}20`,
+                      border: `1px solid ${COLORS.cyan}35`,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       flexShrink: 0,
                       transition: "transform 0.2s",
                       transform: activeRow === i ? "scale(1.15)" : "scale(1)",
                     }}>
-                      <Check size={11} color="#7EC8A4" />
+                      <Check size={10} color={COLORS.cyan} />
                     </div>
-                    <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "14px", color: activeRow === i ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.72)", lineHeight: 1.5, transition: "color 0.2s" }}>
+                    <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 400, fontSize: "0.8rem", color: activeRow === i ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.7)", lineHeight: 1.45, transition: "color 0.2s" }}>
                       {row.pro}
                     </span>
                   </div>
@@ -282,18 +440,19 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
             </div>
           </div>
 
-          {/* ── Image strip ── */}
+          {/* ── Image Strip with Tourist Connection ── */}
           <div
             ref={imgsRef}
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "20px",
+              gap: "1.5rem",
+              marginBottom: "4rem",
             }}
           >
             {[
-              { img: jungleImg, label: "Ancient Rainforest", sub: "Biodiversity hotspot", delay: 0 },
-              { img: elephantImg, label: "Elephant Encounters", sub: "As close as nature allows", delay: 0.12 },
+              { img: jungleImg, label: "Secret River Corridors", sub: "Where elephants come to drink", icon: <Waves size={18} color={COLORS.cyan} />, delay: 0 },
+              { img: elephantImg, label: "Wild Encounters", sub: "As close as nature allows", icon: <Eye size={18} color={COLORS.lightCyan} />, delay: 0.12 },
             ].map((item, i) => (
               <div
                 key={i}
@@ -302,7 +461,7 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
                 onMouseLeave={() => setImgHover(null)}
                 style={{
                   height: "320px",
-                  borderRadius: "22px",
+                  borderRadius: "1.5rem",
                   overflow: "hidden",
                   position: "relative",
                   cursor: "default",
@@ -311,7 +470,6 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
                   transition: `opacity 0.65s ease ${item.delay}s, transform 0.65s ease ${item.delay}s`,
                 }}
               >
-                {/* Image */}
                 <div style={{
                   position: "absolute", inset: 0,
                   backgroundImage: `url(${item.img})`,
@@ -321,45 +479,91 @@ export function UniqueValueSection({ jungleImg, elephantImg }: UniqueValueSectio
                   transform: imgHover === i ? "scale(1.06)" : "scale(1)",
                 }} />
 
-                {/* Gradient */}
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,25,15,0.88) 0%, rgba(10,25,15,0.2) 55%, transparent 100%)" }} />
+                {/* Gradient overlay */}
+                <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${COLORS.navy}CC 0%, ${COLORS.navy}22 55%, transparent 100%)` }} />
 
-                {/* Border glow on hover */}
+                {/* Border glow */}
                 <div style={{
                   position: "absolute", inset: 0,
-                  borderRadius: "22px",
-                  border: `1px solid ${imgHover === i ? "rgba(126,200,164,0.4)" : "rgba(126,200,164,0.1)"}`,
+                  borderRadius: "1.5rem",
+                  border: `1px solid ${imgHover === i ? `${COLORS.cyan}50` : `${COLORS.cyan}15`}`,
                   transition: "border-color 0.3s",
                   pointerEvents: "none",
                 }} />
 
-                {/* Caption */}
-                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "28px 28px 26px" }}>
+                {/* Content */}
+                <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "1.5rem" }}>
                   <div style={{
-                    display: "inline-block",
-                    background: "rgba(126,200,164,0.15)",
-                    border: "1px solid rgba(126,200,164,0.25)",
+                    display: "flex", alignItems: "center", gap: "0.5rem",
+                    background: `${COLORS.cyan}15`,
+                    border: `1px solid ${COLORS.cyan}25`,
                     borderRadius: "50px",
-                    padding: "3px 12px",
-                    marginBottom: "8px",
+                    padding: "0.25rem 0.75rem",
+                    width: "fit-content",
+                    marginBottom: "0.75rem",
                   }}>
-                    <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "9px", fontWeight: 600, color: "#7EC8A4", letterSpacing: "2px", textTransform: "uppercase" }}>
+                    {item.icon}
+                    <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.6rem", fontWeight: 600, color: COLORS.cyan, letterSpacing: "1.5px", textTransform: "uppercase" }}>
                       {item.sub}
                     </span>
                   </div>
-                  <p style={{ fontFamily: "'Cormorant Garamond', serif", color: "#fff", fontSize: "22px", fontWeight: 700, lineHeight: 1.2 }}>
+                  <p style={{ fontFamily: "'Cormorant Garamond', serif", color: "#fff", fontSize: "1.5rem", fontWeight: 700, lineHeight: 1.2, margin: 0 }}>
                     {item.label}
                   </p>
                 </div>
               </div>
             ))}
           </div>
+
+          {/* ── Call to Action Banner ── */}
+          <div
+            style={{
+              background: `linear-gradient(135deg, ${COLORS.cyan}15, ${COLORS.navy}40)`,
+              borderRadius: "2rem",
+              padding: "2rem",
+              textAlign: "center",
+              marginBottom: "2rem",
+              border: `1px solid ${COLORS.cyan}20`,
+              backdropFilter: "blur(8px)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+              <Users size={20} color={COLORS.lightCyan} />
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.7rem", letterSpacing: "2px", color: COLORS.lightCyan, textTransform: "uppercase", fontWeight: 600 }}>Join 12,000+ Happy Adventurers</span>
+            </div>
+            <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(1.2rem, 3vw, 1.5rem)", color: "#fff", marginBottom: "0.5rem" }}>
+              Ready for the <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>experience of a lifetime?</span>
+            </h3>
+            <button
+              onClick={() => document.querySelector("#booking")?.scrollIntoView({ behavior: "smooth" })}
+              style={{
+                background: `linear-gradient(135deg, ${COLORS.cyan}, ${COLORS.lightCyan})`,
+                border: "none",
+                padding: "0.75rem 2rem",
+                borderRadius: "3rem",
+                color: COLORS.navy,
+                fontWeight: 700,
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: "0.85rem",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                marginTop: "1rem",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = `0 8px 20px ${COLORS.cyan}40`; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
+            >
+              Book Your Kayak Safari <ArrowRight size={14} />
+            </button>
+          </div>
         </div>
 
         {/* Animated bottom wave */}
-        <div style={{ marginTop: "90px", lineHeight: 0, marginLeft: "-24px", marginRight: "-24px" }}>
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "80px" }}>
-            <path fill="rgba(126,200,164,0.1)" d="M0,50 C400,10 900,70 1440,30 L1440,80 L0,80 Z">
+        <div style={{ marginTop: "3rem", lineHeight: 0, marginLeft: "-1.5rem", marginRight: "-1.5rem" }}>
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "60px" }}>
+            <path fill={COLORS.cyan} fillOpacity="0.08" d="M0,50 C400,10 900,70 1440,30 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="7s" repeatCount="indefinite"
                 values="M0,50 C400,10 900,70 1440,30 L1440,80 L0,80 Z;M0,30 C400,70 900,15 1440,55 L1440,80 L0,80 Z;M0,50 C400,10 900,70 1440,30 L1440,80 L0,80 Z" />
             </path>
