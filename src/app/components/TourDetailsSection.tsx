@@ -1,105 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 
-// ── Brand palette ──
-const N = "#1B3A6B";   // navy
-const C = "#00B4D8";   // cyan
-const LC = "#48CAE4";  // light cyan
-const R = "#E63329";   // red
+const N  = "#1B3A6B";
+const C  = "#00B4D8";
+const LC = "#48CAE4";
+const R  = "#E63329";
 
-// ── Data ──
-const details = [
-  {
-    label: "Duration",    value: "3–4 Hours",     sub: "Morning & afternoon slots · sunrise available",
-    color: C,  iconColor: C,  accentBg: "rgba(0,180,216,0.10)",  large: true,
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round">
-        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Group Size",  value: "Max 6",          sub: "Intimate · never crowded",
-    color: C,  iconColor: C,  accentBg: "rgba(0,180,216,0.10)",  large: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="1.8" strokeLinecap="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Price",       value: "From $89",       sub: "Per person · all inclusive",
-    color: R,  iconColor: R,  accentBg: "rgba(230,51,41,0.09)",  large: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={R} strokeWidth="1.8" strokeLinecap="round">
-        <line x1="12" y1="1" x2="12" y2="23"/>
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Location",    value: "Kalawewa",        sub: "North Central Province, LK",
-    color: N,  iconColor: N,  accentBg: "rgba(27,58,107,0.07)",  large: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={N} strokeWidth="1.8" strokeLinecap="round">
-        <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Best Season", value: "June – October",  sub: "Peak elephant gathering at Minneriya & Kaudulla",
-    color: R,  iconColor: R,  accentBg: "rgba(230,51,41,0.09)",  large: true,
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={R} strokeWidth="1.8" strokeLinecap="round">
-        <circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-      </svg>
-    ),
-  },
-  {
-    label: "Photography", value: "Unrestricted",    sub: "Bring your best lens",
-    color: LC, iconColor: LC, accentBg: "rgba(72,202,228,0.10)", large: false,
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={LC} strokeWidth="1.8" strokeLinecap="round">
-        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-    ),
-  },
-];
-
-const included = [
-  { text: "Professional kayak with paddle & safety gear",
-    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg> },
-  { text: "Certified naturalist guide on every tour",
-    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
-  { text: "Life jacket & full safety briefing",
-    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> },
-  { text: "Light refreshments & chilled water",
-    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg> },
-  { text: "Wildlife photography tips & guidance",
-    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> },
-  { text: "Eco-friendly experience certificate",
-    icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> },
-];
-
-const reviews = [
-  { avatar: "E", name: "Emma Thompson",      loc: "London, UK",    date: "2 weeks ago",  comment: "Absolutely incredible! We saw 23 elephants including 4 babies. The guides are true conservationists." },
-  { avatar: "R", name: "Rajiv Mehta",        loc: "Mumbai, India", date: "1 month ago",  comment: "Best wildlife experience of my life. Silent kayaking makes all the difference — elephants didn't even notice us." },
-  { avatar: "S", name: "Sarah Chen",         loc: "Singapore",     date: "3 weeks ago",  comment: "Worth every penny. Sunrise on the water with mist and elephants calling — pure magic!" },
-];
-
-// ── Helpers ──
-function useInView(threshold = 0.1) {
+function useInView(threshold = 0.08) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setInView(true); obs.disconnect(); } },
+      ([e]) => { if (e.isIntersecting) { setInView(true); obs.disconnect(); } },
       { threshold }
     );
     obs.observe(el);
@@ -108,372 +21,695 @@ function useInView(threshold = 0.1) {
   return { ref, inView };
 }
 
-const StarShape = () => (
-  <div style={{
-    width: "10px", height: "10px", background: R, flexShrink: 0,
-    clipPath: "polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)",
-  }} />
-);
-
-// ── Sub-components ──
-function BentoTile({ d, index, inView }: { d: typeof details[0]; index: number; inView: boolean }) {
-  const [hov, setHov] = useState(false);
+// Dashed perforation line
+function Perforation({ color = `${N}18` }: { color?: string }) {
   return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
+    <div style={{
+      position: "relative",
+      height: "1px",
+      margin: "0",
+      display: "flex",
+      alignItems: "center",
+    }}>
+      {/* Notch left */}
+      <div style={{
+        width: "14px", height: "28px",
         background: "#fff",
-        borderRadius: "22px",
-        border: `1px solid ${hov ? d.color + "33" : "rgba(27,58,107,0.07)"}`,
-        padding: "28px 26px",
-        position: "relative",
-        overflow: "hidden",
-        cursor: "default",
-        gridColumn: d.large ? "span 2" : "span 1",
-        transition: "transform 0.35s cubic-bezier(0.34,1.56,.64,1), box-shadow 0.3s, border-color 0.3s",
-        transform: inView
-          ? hov ? "translateY(-6px) scale(1.01)" : "translateY(0)"
-          : "translateY(40px)",
-        opacity: inView ? 1 : 0,
-        transitionDelay: inView ? `${index * 0.07}s` : "0s",
-        boxShadow: hov ? "0 20px 48px rgba(27,58,107,0.11)" : "0 2px 12px rgba(27,58,107,0.04)",
-      }}
-    >
-      {/* top accent */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0, height: "3px",
-        background: d.color, opacity: hov ? 1 : 0.28,
-        transition: "opacity 0.3s",
+        borderRadius: "0 14px 14px 0",
+        flexShrink: 0,
+        border: `1px solid ${color}`,
+        borderLeft: "none",
+        marginLeft: "-1px",
       }} />
-      {/* corner orb */}
-      {d.large && (
-        <div style={{
-          position: "absolute", right: "-20px", bottom: "-20px",
-          width: "100px", height: "100px", borderRadius: "50%",
-          background: d.color + "09", pointerEvents: "none",
-        }} />
-      )}
-      {/* icon */}
+      {/* Dashed line */}
       <div style={{
-        width: "44px", height: "44px", borderRadius: "14px",
-        background: hov ? d.accentBg : "rgba(27,58,107,0.04)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        marginBottom: "18px",
-        transition: "background 0.3s, transform 0.3s cubic-bezier(0.34,1.56,.64,1)",
-        transform: hov ? "scale(1.08) rotate(-3deg)" : "scale(1)",
-      }}>
-        {d.icon}
-      </div>
-      {/* label */}
+        flex: 1,
+        height: "1px",
+        backgroundImage: `repeating-linear-gradient(90deg, ${color} 0, ${color} 8px, transparent 8px, transparent 16px)`,
+      }} />
+      {/* Scissors icon */}
       <div style={{
-        fontFamily: "'Outfit', sans-serif",
-        fontSize: "9px", fontWeight: 700, letterSpacing: "2.2px",
-        textTransform: "uppercase", color: hov ? d.color : "#8aabb0",
-        marginBottom: "6px", transition: "color 0.2s",
+        position: "absolute", left: "50%", transform: "translateX(-50%)",
+        background: "#fff",
+        padding: "0 6px",
+        display: "flex", alignItems: "center", gap: "3px",
       }}>
-        {d.label}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={`${N}35`} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+          <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+          <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+          <line x1="8.12" y1="8.12" x2="12" y2="12"/>
+        </svg>
       </div>
-      {/* value */}
+      {/* Notch right */}
       <div style={{
-        fontFamily: "'Cormorant Garamond', serif",
-        fontSize: d.large ? "34px" : "26px",
-        fontWeight: 700, color: d.label === "Price" ? R : N,
-        lineHeight: 1.1, marginBottom: "4px",
-      }}>
-        {d.value}
-      </div>
-      {/* sub */}
-      <div style={{
-        fontFamily: "'Outfit', sans-serif",
-        fontSize: "11px", fontWeight: 300,
-        color: "#8aabb0", lineHeight: 1.5,
-      }}>
-        {d.sub}
-      </div>
+        width: "14px", height: "28px",
+        background: "#fff",
+        borderRadius: "14px 0 0 14px",
+        flexShrink: 0,
+        border: `1px solid ${color}`,
+        borderRight: "none",
+        marginRight: "-1px",
+      }} />
     </div>
   );
 }
 
-function IncludedItem({ item }: { item: typeof included[0] }) {
-  const [hov, setHov] = useState(false);
+// Single form field
+function Field({
+  label, value, sub, color = N, span = false, large = false,
+  inView, delay = 0,
+}: {
+  label: string; value: string; sub?: string; color?: string;
+  span?: boolean; large?: boolean; inView: boolean; delay?: number;
+}) {
   return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        display: "flex", alignItems: "center", gap: "12px",
-        padding: "12px 14px", borderRadius: "12px",
-        background: hov ? "rgba(0,180,216,0.08)" : "transparent",
-        transform: hov ? "translateX(5px)" : "translateX(0)",
-        transition: "background 0.22s, transform 0.22s",
-        cursor: "default",
-      }}
-    >
+    <div style={{
+      gridColumn: span ? "1 / -1" : undefined,
+      paddingBottom: "18px",
+      borderBottom: `1px solid ${N}0d`,
+      opacity: inView ? 1 : 0,
+      transform: inView ? "translateY(0)" : "translateY(14px)",
+      transition: `opacity 0.5s ${delay}s, transform 0.5s ${delay}s`,
+    }}>
       <div style={{
-        width: "32px", height: "32px", borderRadius: "50%",
-        background: "rgba(0,180,216,0.12)", border: "1px solid rgba(0,180,216,0.2)",
-        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-        color: C,
+        fontFamily: "'DM Mono', 'Courier New', monospace",
+        fontSize: "8.5px",
+        fontWeight: 500,
+        letterSpacing: "2.5px",
+        textTransform: "uppercase",
+        color: `${N}45`,
+        marginBottom: "6px",
       }}>
-        {item.icon}
+        {label}
       </div>
-      <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 300, color: "rgba(255,255,255,0.82)" }}>
-        {item.text}
-      </span>
+      <div style={{
+        fontFamily: "'Fraunces', serif",
+        fontSize: large ? "clamp(24px, 3.5vw, 36px)" : "clamp(18px, 2.2vw, 24px)",
+        fontWeight: 700,
+        color: color,
+        lineHeight: 1.1,
+        letterSpacing: large ? "-0.5px" : "0",
+        marginBottom: sub ? "4px" : "0",
+      }}>
+        {value}
+      </div>
+      {sub && (
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: "11px",
+          fontWeight: 300,
+          color: `${N}50`,
+          lineHeight: 1.5,
+        }}>
+          {sub}
+        </div>
+      )}
     </div>
   );
 }
 
-// ── Main export ──
+const fields = [
+  { label: "Experience", value: "Kayak Elephant Safari", sub: "Kalawewa Reservoir · Sri Lanka", color: N, span: true, large: true },
+  { label: "Duration",   value: "3–4 Hours",             sub: "Morning & afternoon · sunrise available", color: C },
+  { label: "Group Size", value: "Max 6 Guests",          sub: "Intimate · never crowded", color: N },
+  { label: "Price",      value: "From $89",              sub: "Per person · all taxes included", color: R },
+  { label: "Location",   value: "Kalawewa, LK",          sub: "North Central Province", color: N },
+  { label: "Best Season",value: "June – October",        sub: "Peak elephant gathering at Minneriya & Kaudulla", color: R },
+  { label: "Photography",value: "Unrestricted",          sub: "Bring your best lens", color: C },
+];
+
+const included = [
+  "Professional kayak with paddle & safety gear",
+  "Certified naturalist guide on every tour",
+  "Life jacket & full safety briefing",
+  "Light refreshments & chilled water",
+  "Wildlife photography tips & guidance",
+  "Eco-friendly experience certificate",
+];
+
+const reviews = [
+  { initial: "E", name: "Emma Thompson",      loc: "London, UK",    text: "23 elephants including 4 babies. The guides are true conservationists." },
+  { initial: "R", name: "Rajiv Mehta",        loc: "Mumbai, India", text: "Silent kayaking makes all the difference — elephants didn't even notice us." },
+  { initial: "S", name: "Sarah Chen",         loc: "Singapore",     text: "Sunrise on the water with mist and elephants calling — pure magic!" },
+];
+
 export function TourDetailsSection() {
   const { ref: headerRef, inView: headerIn } = useInView(0.1);
-  const { ref: bentoRef,  inView: bentoIn  } = useInView(0.08);
-  const { ref: incRef,    inView: incIn    } = useInView(0.08);
-  const { ref: revRef,    inView: revIn    } = useInView(0.1);
-  const { ref: ctaRef,    inView: ctaIn    } = useInView(0.1);
+  const { ref: formRef,   inView: formIn   } = useInView(0.06);
+  const { ref: incRef,    inView: incIn    } = useInView(0.06);
+  const { ref: revRef,    inView: revIn    } = useInView(0.08);
+  const { ref: ctaRef,    inView: ctaIn    } = useInView(0.08);
 
   return (
     <>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,800;1,9..144,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
       />
-
       <style>{`
         @keyframes tdPulse {
-          0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(230,51,41,.6); }
-          50%      { opacity:.5; box-shadow:0 0 0 5px rgba(230,51,41,0); }
+          0%,100% { box-shadow: 0 0 0 0 rgba(230,51,41,.55); }
+          50%      { box-shadow: 0 0 0 6px rgba(230,51,41,0); }
         }
-        .td-inc-item-wrap { transition: background .22s, transform .22s; }
-        .td-inc-item-wrap:hover { background: rgba(0,180,216,0.08) !important; transform: translateX(5px); }
-        .td-review-card { transition: transform .3s cubic-bezier(.34,1.56,.64,1), border-color .3s; }
-        .td-review-card:hover { transform: translateY(-5px) !important; border-color: rgba(0,180,216,0.3) !important; }
-        .td-cta-btn-main {
+        @keyframes checkDraw {
+          from { stroke-dashoffset: 30; opacity: 0; }
+          to   { stroke-dashoffset: 0;  opacity: 1; }
+        }
+        @keyframes stampIn {
+          from { transform: rotate(-8deg) scale(1.3); opacity: 0; }
+          to   { transform: rotate(-8deg) scale(1);   opacity: 0.85; }
+        }
+        .inc-row { transition: background 0.2s, padding-left 0.2s; cursor: default; }
+        .inc-row:hover { background: rgba(0,180,216,0.06) !important; padding-left: 22px !important; }
+        .rev-card { transition: transform 0.35s cubic-bezier(.34,1.56,.64,1), box-shadow 0.3s; cursor: default; }
+        .rev-card:hover { transform: translateY(-7px) rotate(0deg) !important; box-shadow: 0 20px 48px rgba(27,58,107,0.12) !important; }
+        .stub-btn {
           background: ${R};
           color: #fff;
           border: none;
-          padding: 16px 38px;
+          padding: 18px 44px;
           border-radius: 50px;
-          font-family: 'Outfit', sans-serif;
+          font-family: 'DM Sans', sans-serif;
           font-size: 13px;
           font-weight: 700;
-          letter-spacing: .8px;
+          letter-spacing: 1px;
           text-transform: uppercase;
           cursor: pointer;
           white-space: nowrap;
-          box-shadow: 0 8px 24px rgba(230,51,41,.38);
-          transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+          box-shadow: 0 8px 28px rgba(230,51,41,0.38);
+          transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s;
         }
-        .td-cta-btn-main:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 36px rgba(230,51,41,.55); }
-
-        @media (max-width: 640px) {
-          .td-bento-grid     { grid-template-columns: 1fr 1fr !important; }
-          .td-bento-large    { grid-column: span 2 !important; }
-          .td-included-grid  { grid-template-columns: 1fr !important; padding: 28px 22px !important; gap: 24px !important; }
-          .td-reviews-grid   { grid-template-columns: 1fr !important; }
-          .td-cta-inner      { flex-direction: column !important; text-align: center !important; padding: 28px 22px !important; }
-          .td-section-pad    { padding: 52px 16px 0 !important; }
+        .stub-btn:hover {
+          transform: translateY(-3px) scale(1.04);
+          box-shadow: 0 18px 44px rgba(230,51,41,0.5);
         }
-        @media (max-width: 860px) and (min-width: 641px) {
-          .td-reviews-grid { grid-template-columns: 1fr 1fr !important; }
+        @media (max-width: 680px) {
+          .form-grid { grid-template-columns: 1fr !important; }
+          .docket-inner { padding: 32px 22px !important; }
+          .stub-inner { flex-direction: column !important; align-items: flex-start !important; }
+          .rev-row { flex-direction: column !important; }
         }
       `}</style>
 
       <section
         id="tour-details"
-        style={{ background: "#FAF5EA", position: "relative", overflow: "hidden" }}
+        style={{ background: "#fff", position: "relative", overflow: "hidden" }}
       >
-        {/* dot pattern */}
+        {/* Ledger-line bg */}
         <div style={{
-          position: "absolute", inset: 0,
-          backgroundImage: `radial-gradient(circle, rgba(0,180,216,0.09) 1.2px, transparent 1.2px)`,
-          backgroundSize: "28px 28px",
-          pointerEvents: "none", zIndex: 0,
+          position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage: `repeating-linear-gradient(to bottom, transparent, transparent 39px, ${N}06 39px, ${N}06 40px)`,
+          zIndex: 0,
         }} />
 
-        <div
-          className="td-section-pad"
-          style={{ maxWidth: "1100px", margin: "0 auto", padding: "72px 28px 0", position: "relative", zIndex: 1 }}
-        >
+        <div style={{ maxWidth: "1060px", margin: "0 auto", padding: "96px 28px 0", position: "relative", zIndex: 1 }}>
 
-          {/* ── HEADER ── */}
-          <div ref={headerRef} style={{ textAlign: "center", marginBottom: "56px" }}>
+          {/* ── SECTION HEADER ── */}
+          <div ref={headerRef} style={{ marginBottom: "52px" }}>
             <div style={{
-              display: "inline-flex", alignItems: "center", gap: "7px",
-              background: "rgba(230,51,41,0.09)", border: "1px solid rgba(230,51,41,0.22)",
-              color: R, padding: "6px 18px", borderRadius: "50px",
-              fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase",
-              fontFamily: "'Outfit', sans-serif", marginBottom: "18px",
-              opacity: headerIn ? 1 : 0,
-              transform: headerIn ? "translateY(0)" : "translateY(14px)",
-              transition: "opacity .6s ease, transform .6s ease",
+              display: "flex", alignItems: "center", gap: "14px", marginBottom: "18px",
+              opacity: headerIn ? 1 : 0, transition: "opacity 0.6s",
             }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "tdPulse 2s infinite" }} />
-              Plan Your Adventure
+              <div style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "9px", letterSpacing: "3px", textTransform: "uppercase",
+                color: R, fontWeight: 500,
+                display: "flex", alignItems: "center", gap: "8px",
+              }}>
+                <div style={{ width: "7px", height: "7px", borderRadius: "50%", background: R, animation: "tdPulse 2s infinite" }} />
+                Booking Docket · Tour Details
+              </div>
+              <div style={{ flex: 1, height: "1px", backgroundImage: `repeating-linear-gradient(90deg, ${N}20 0, ${N}20 6px, transparent 6px, transparent 12px)` }} />
+              <div style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "9px", letterSpacing: "2px",
+                color: `${N}35`, fontWeight: 400,
+              }}>
+                REF-KK-2024
+              </div>
             </div>
 
             <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(30px,5vw,58px)", fontWeight: 700, color: N,
-              lineHeight: 1.08, letterSpacing: "-0.5px",
+              fontFamily: "'Fraunces', serif",
+              fontSize: "clamp(34px, 6vw, 70px)",
+              fontWeight: 800,
+              color: N,
+              lineHeight: 0.94,
+              letterSpacing: "-2px",
               opacity: headerIn ? 1 : 0,
-              transform: headerIn ? "translateY(0)" : "translateY(20px)",
-              transition: "opacity .7s ease .1s, transform .7s ease .1s",
+              transform: headerIn ? "translateY(0)" : "translateY(22px)",
+              transition: "opacity 0.7s 0.1s, transform 0.7s 0.1s",
             }}>
-              Everything You Need<br />to <em style={{ color: LC, fontStyle: "italic" }}>Know</em>
+              Plan Your
             </h2>
-
-            <p style={{
-              fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 300,
-              color: "#6b7e8a", lineHeight: 1.75, maxWidth: "460px", margin: "14px auto 0",
+            <h2 style={{
+              fontFamily: "'Fraunces', serif",
+              fontSize: "clamp(34px, 6vw, 70px)",
+              fontWeight: 800,
+              fontStyle: "italic",
+              color: C,
+              lineHeight: 0.94,
+              letterSpacing: "-2px",
+              marginBottom: "20px",
               opacity: headerIn ? 1 : 0,
-              transform: headerIn ? "translateY(0)" : "translateY(16px)",
-              transition: "opacity .7s ease .2s, transform .7s ease .2s",
+              transform: headerIn ? "translateY(0)" : "translateY(28px)",
+              transition: "opacity 0.7s 0.15s, transform 0.7s 0.15s",
+            }}>
+              Adventure.
+            </h2>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "15px", fontWeight: 300,
+              color: "#6B7C8A", lineHeight: 1.75,
+              maxWidth: "460px",
+              opacity: headerIn ? 1 : 0,
+              transition: "opacity 0.6s 0.3s",
             }}>
               No hidden costs. No surprises. Just you, the river, and the gentle giants of Kalawewa.
             </p>
           </div>
 
-          {/* ── BENTO GRID ── */}
-          <div
-            ref={bentoRef}
-            className="td-bento-grid"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "14px",
-              marginBottom: "52px",
-            }}
-          >
-            {details.map((d, i) => (
-              <div key={i} className={d.large ? "td-bento-large" : ""} style={{ gridColumn: d.large ? "span 2" : "span 1" }}>
-                <BentoTile d={d} index={i} inView={bentoIn} />
-              </div>
-            ))}
-          </div>
+          {/* ── MAIN DOCKET ── */}
+          <div style={{
+            border: `1.5px solid ${N}18`,
+            borderRadius: "16px",
+            overflow: "hidden",
+            boxShadow: "0 4px 40px rgba(27,58,107,0.07)",
+            marginBottom: "0",
+          }}>
 
-          {/* ── INCLUDED DARK PANEL ── */}
-          <div
-            ref={incRef}
-            className="td-included-grid"
-            style={{
+            {/* Docket header bar */}
+            <div style={{
               background: N,
-              borderRadius: "26px",
-              padding: "44px 48px",
-              marginBottom: "52px",
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "40px",
-              position: "relative",
-              overflow: "hidden",
-              opacity: incIn ? 1 : 0,
-              transform: incIn ? "translateY(0)" : "translateY(28px)",
-              transition: "opacity .7s ease, transform .7s ease",
-            }}
-          >
-            {/* wave bg */}
-            <div style={{ position: "absolute", inset: 0, opacity: 0.07, pointerEvents: "none" }}>
-              <svg viewBox="0 0 1100 200" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
-                <path fill={C} d="M0,60 C300,130 600,20 900,80 C1050,110 1100,60 1100,60 L1100,200 L0,200 Z" />
-              </svg>
-            </div>
-
-            {/* left */}
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: "7px",
-                background: "rgba(0,180,216,0.12)", border: "1px solid rgba(0,180,216,0.22)",
-                color: C, padding: "5px 14px", borderRadius: "50px",
-                fontSize: "9px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
-                fontFamily: "'Outfit', sans-serif", marginBottom: "18px",
-              }}>
-                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                All Inclusive
+              padding: "16px 32px",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              flexWrap: "wrap", gap: "12px",
+            }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+                <div style={{
+                  width: "32px", height: "32px", border: `1.5px solid ${C}50`,
+                  borderRadius: "6px", display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                </div>
+                <span style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: "13px", fontWeight: 600,
+                  color: "#fff", letterSpacing: "0.3px",
+                }}>
+                  Kayaking Kalawewa — Elephant Safari
+                </span>
               </div>
-              <h3 style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(26px,3.5vw,40px)", fontWeight: 700, color: "#fff",
-                lineHeight: 1.1, marginBottom: "14px",
-              }}>
-                What's <em style={{ color: LC, fontStyle: "italic" }}>Included</em>
-              </h3>
-              <p style={{
-                fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 300,
-                color: "rgba(255,255,255,0.5)", lineHeight: 1.8, marginBottom: "28px",
-              }}>
-                Every Wild Paddle experience is fully curated so you can focus entirely on the wildlife and the moment.
-              </p>
-              {/* price badge */}
-              <div style={{
-                display: "inline-block",
-                background: "rgba(0,180,216,0.10)", border: "1px solid rgba(0,180,216,0.22)",
-                borderRadius: "16px", padding: "14px 20px",
-              }}>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "9px", letterSpacing: "1.5px", textTransform: "uppercase", color: LC, marginBottom: "3px" }}>Starting from</div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "36px", fontWeight: 700, color: C, lineHeight: 1 }}>$89</div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "2px" }}>per person · all taxes included</div>
+              <div style={{ display: "flex", gap: "20px" }}>
+                {["Wildlife", "Heritage", "Eco"].map((t, i) => (
+                  <span key={i} style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: "9px", letterSpacing: "2px",
+                    textTransform: "uppercase",
+                    color: i === 0 ? C : "rgba(255,255,255,0.25)",
+                    fontWeight: 500,
+                  }}>{t}</span>
+                ))}
               </div>
             </div>
 
-            {/* right — included items */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "4px", justifyContent: "center", position: "relative", zIndex: 1 }}>
-              {included.map((item, i) => <IncludedItem key={i} item={item} />)}
-            </div>
-          </div>
-
-          
-
-          {/* ── CTA BAR ── */}
-          <div
-            ref={ctaRef}
-            className="td-cta-inner"
-            style={{
-              background: N,
-              borderRadius: "24px",
-              padding: "36px 44px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "24px",
-              flexWrap: "wrap",
-              position: "relative",
-              overflow: "hidden",
-              opacity: ctaIn ? 1 : 0,
-              transform: ctaIn ? "translateY(0)" : "translateY(24px)",
-              transition: "opacity .7s ease, transform .7s ease",
-            }}
-          >
-            {/* accent orb */}
-            <div style={{ position: "absolute", right: "-40px", top: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(0,180,216,0.06)", pointerEvents: "none" }} />
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "7px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", color: LC, marginBottom: "8px" }}>
-                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "tdPulse 2s infinite" }} />
-                Limited spots available
-              </div>
-              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(22px,3vw,34px)", fontWeight: 700, color: "#fff", lineHeight: 1.1 }}>
-                Ready for the <em style={{ color: C, fontStyle: "italic" }}>experience of a lifetime?</em>
-              </div>
-            </div>
-            <button
-              className="td-cta-btn-main"
-              style={{ position: "relative", zIndex: 1 }}
-              onClick={() => document.querySelector("#booking")?.scrollIntoView({ behavior: "smooth" })}
+            {/* Form fields section */}
+            <div
+              ref={formRef}
+              className="docket-inner"
+              style={{ padding: "40px 40px 32px" }}
             >
-              Book Your Kayak Safari →
-            </button>
+              <div
+                className="form-grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "0 48px",
+                  rowGap: "0",
+                }}
+              >
+                {fields.map((f, i) => (
+                  <div
+                    key={i}
+                    style={{ gridColumn: f.span ? "1 / -1" : undefined }}
+                  >
+                    <Field {...f} inView={formIn} delay={i * 0.07} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Perforation between form and included */}
+            <Perforation color={`${N}20`} />
+
+            {/* ── INCLUDED CHECKLIST ── */}
+            <div
+              ref={incRef}
+              className="docket-inner"
+              style={{
+                padding: "36px 40px",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "0 56px",
+                opacity: incIn ? 1 : 0,
+                transition: "opacity 0.6s",
+              }}
+            >
+              {/* Left: label */}
+              <div style={{ gridColumn: "1 / -1", marginBottom: "24px" }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: "12px",
+                }}>
+                  <span style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: "9px", fontWeight: 500,
+                    letterSpacing: "2.5px", textTransform: "uppercase",
+                    color: `${N}40`,
+                  }}>
+                    All Inclusive — What's Provided
+                  </span>
+                  <div style={{ flex: 1, height: "1px", background: `${N}10` }} />
+                  <div style={{
+                    background: `${C}12`,
+                    border: `1px solid ${C}30`,
+                    borderRadius: "50px",
+                    padding: "4px 12px",
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "10px", fontWeight: 600,
+                    color: C, letterSpacing: "0.5px",
+                  }}>
+                    {included.length} items
+                  </div>
+                </div>
+              </div>
+
+              {/* Checklist items — two columns */}
+              {included.map((item, i) => (
+                <div
+                  key={i}
+                  className="inc-row"
+                  style={{
+                    display: "flex", alignItems: "center", gap: "14px",
+                    padding: "13px 14px 13px 14px",
+                    borderRadius: "8px",
+                    marginBottom: "4px",
+                    opacity: incIn ? 1 : 0,
+                    transform: incIn ? "translateX(0)" : "translateX(-16px)",
+                    transition: `opacity 0.5s ${0.05 + i * 0.07}s, transform 0.5s ${0.05 + i * 0.07}s, background 0.2s, padding-left 0.2s`,
+                  }}
+                >
+                  {/* Ink tick box */}
+                  <div style={{
+                    width: "22px", height: "22px",
+                    border: `1.5px solid ${C}`,
+                    borderRadius: "4px",
+                    flexShrink: 0,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    background: `${C}08`,
+                  }}>
+                    <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
+                      style={{ animation: incIn ? `checkDraw 0.4s ${0.3 + i * 0.08}s both` : "none", strokeDasharray: 30, strokeDashoffset: incIn ? 0 : 30 }}>
+                      <path d="M2 7l4 4 6-7" />
+                    </svg>
+                  </div>
+                  <span style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: "13px", fontWeight: 300,
+                    color: "#4A5E6A", lineHeight: 1.5,
+                  }}>
+                    {item}
+                  </span>
+                </div>
+              ))}
+
+              {/* Price badge — spans full width at bottom */}
+              <div style={{
+                gridColumn: "1 / -1",
+                marginTop: "24px",
+                paddingTop: "20px",
+                borderTop: `1px solid ${N}0d`,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                flexWrap: "wrap", gap: "16px",
+                opacity: incIn ? 1 : 0,
+                transition: "opacity 0.6s 0.5s",
+              }}>
+                <div>
+                  <div style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: "8.5px", letterSpacing: "2px",
+                    textTransform: "uppercase", color: `${N}45`,
+                    marginBottom: "4px",
+                  }}>
+                    Starting From
+                  </div>
+                  <div style={{
+                    display: "flex", alignItems: "baseline", gap: "6px",
+                  }}>
+                    <span style={{
+                      fontFamily: "'Fraunces', serif",
+                      fontSize: "42px", fontWeight: 800,
+                      color: R, lineHeight: 1, letterSpacing: "-1px",
+                    }}>$89</span>
+                    <span style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "12px", fontWeight: 300,
+                      color: `${N}55`,
+                    }}>per person</span>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  {["Free Cancellation", "Eco-Certified", "Small Groups"].map((tag, i) => (
+                    <span key={i} style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "10px", fontWeight: 500,
+                      letterSpacing: "0.5px",
+                      color: N,
+                      background: `${N}08`,
+                      border: `1px solid ${N}14`,
+                      padding: "6px 14px",
+                      borderRadius: "50px",
+                    }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Perforation before reviews */}
+            <Perforation color={`${N}20`} />
+
+            {/* ── REVIEWS — stamp-style horizontal row ── */}
+            <div
+              ref={revRef}
+              className="docket-inner"
+              style={{ padding: "36px 40px" }}
+            >
+              <div style={{
+                fontFamily: "'DM Mono', monospace",
+                fontSize: "9px", fontWeight: 500,
+                letterSpacing: "2.5px", textTransform: "uppercase",
+                color: `${N}40`,
+                marginBottom: "24px",
+                display: "flex", alignItems: "center", gap: "12px",
+              }}>
+                Guest Accounts
+                <div style={{ flex: 1, height: "1px", background: `${N}10` }} />
+                <span style={{ color: C }}>★★★★★ 4.9</span>
+              </div>
+
+              <div
+                className="rev-row"
+                style={{ display: "flex", gap: "16px" }}
+              >
+                {reviews.map((r, i) => (
+                  <div
+                    key={i}
+                    className="rev-card"
+                    style={{
+                      flex: 1,
+                      minWidth: "200px",
+                      background: "#fff",
+                      border: `1px solid ${N}10`,
+                      borderRadius: "10px",
+                      padding: "22px 20px",
+                      position: "relative",
+                      overflow: "hidden",
+                      boxShadow: "0 2px 12px rgba(27,58,107,0.05)",
+                      opacity: revIn ? 1 : 0,
+                      transform: revIn ? `rotate(${i === 1 ? "0.5deg" : i === 0 ? "-0.8deg" : "0.4deg"})` : "translateY(20px)",
+                      transition: `opacity 0.5s ${i * 0.1}s, transform 0.5s ${i * 0.1}s, box-shadow 0.3s`,
+                    }}
+                  >
+                    {/* Stamp watermark */}
+                    <div style={{
+                      position: "absolute", top: "12px", right: "12px",
+                      width: "52px", height: "52px",
+                      border: `2px solid ${C}22`,
+                      borderRadius: "50%",
+                      display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "center",
+                      transform: "rotate(-8deg)",
+                      opacity: revIn ? 0.7 : 0,
+                      transition: `opacity 0.4s ${0.4 + i * 0.1}s`,
+                    }}>
+                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: "7px", color: C, letterSpacing: "1px" }}>VERIFIED</span>
+                      <span style={{ fontFamily: "'Fraunces', serif", fontSize: "10px", fontWeight: 700, color: C }}>★★★★★</span>
+                    </div>
+
+                    {/* Stars row */}
+                    <div style={{ display: "flex", gap: "2px", marginBottom: "12px" }}>
+                      {[...Array(5)].map((_, s) => (
+                        <div key={s} style={{
+                          width: "9px", height: "9px", background: C,
+                          clipPath: "polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)",
+                        }} />
+                      ))}
+                    </div>
+
+                    {/* Quote */}
+                    <p style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: "12.5px", fontWeight: 300,
+                      color: "#4A5E6A", lineHeight: 1.7,
+                      fontStyle: "italic",
+                      marginBottom: "16px",
+                    }}>
+                      "{r.text}"
+                    </p>
+
+                    {/* Author */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <div style={{
+                        width: "30px", height: "30px", borderRadius: "50%",
+                        background: `${N}10`,
+                        border: `1px solid ${N}18`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontFamily: "'Fraunces', serif",
+                        fontSize: "12px", fontWeight: 700,
+                        color: N, flexShrink: 0,
+                      }}>
+                        {r.initial}
+                      </div>
+                      <div>
+                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", fontWeight: 600, color: N }}>
+                          {r.name}
+                        </div>
+                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: "9px", color: `${N}45`, letterSpacing: "0.5px" }}>
+                          {r.loc}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Perforation before stub */}
+            <Perforation color={`${N}25`} />
+
+            {/* ── CTA STUB ── */}
+            <div
+              ref={ctaRef}
+              style={{
+                background: N,
+                padding: "36px 40px",
+                opacity: ctaIn ? 1 : 0,
+                transform: ctaIn ? "translateY(0)" : "translateY(18px)",
+                transition: "opacity 0.7s, transform 0.7s",
+              }}
+            >
+              <div
+                className="stub-inner"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "28px",
+                  flexWrap: "wrap",
+                }}
+              >
+                {/* Left side of stub */}
+                <div>
+                  <div style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: "9px", fontWeight: 500,
+                    letterSpacing: "3px", textTransform: "uppercase",
+                    color: LC,
+                    marginBottom: "10px",
+                    display: "flex", alignItems: "center", gap: "8px",
+                  }}>
+                    <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "tdPulse 2s infinite" }} />
+                    Limited Spots Available
+                  </div>
+                  <div style={{
+                    fontFamily: "'Fraunces', serif",
+                    fontSize: "clamp(22px, 3vw, 38px)",
+                    fontWeight: 800,
+                    color: "#fff",
+                    lineHeight: 1.0,
+                    letterSpacing: "-0.5px",
+                    marginBottom: "4px",
+                  }}>
+                    Ready for the experience
+                  </div>
+                  <div style={{
+                    fontFamily: "'Fraunces', serif",
+                    fontSize: "clamp(22px, 3vw, 38px)",
+                    fontWeight: 800,
+                    fontStyle: "italic",
+                    color: C,
+                    lineHeight: 1.0,
+                    letterSpacing: "-0.5px",
+                  }}>
+                    of a lifetime?
+                  </div>
+                </div>
+
+                {/* Right side: barcode + button */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "14px" }}>
+                  {/* Decorative barcode */}
+                  <div style={{ display: "flex", gap: "2px", alignItems: "flex-end", height: "32px" }}>
+                    {[3,5,2,7,4,6,2,8,3,5,7,4,6,3,5,8,2,4,6,3].map((h, i) => (
+                      <div key={i} style={{
+                        width: "3px",
+                        height: `${h * 4}px`,
+                        background: `rgba(255,255,255,${i % 3 === 0 ? 0.5 : i % 2 === 0 ? 0.2 : 0.35})`,
+                        borderRadius: "1px",
+                      }} />
+                    ))}
+                  </div>
+                  <button
+                    className="stub-btn"
+                    onClick={() => document.querySelector("#booking")?.scrollIntoView({ behavior: "smooth" })}
+                  >
+                    Book Your Kayak Safari →
+                  </button>
+                  <span style={{
+                    fontFamily: "'DM Mono', monospace",
+                    fontSize: "8.5px", letterSpacing: "1.5px",
+                    color: "rgba(255,255,255,0.22)",
+                  }}>
+                    KK · 2024 · KALAWEWA, LK
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
 
         {/* ── WAVE DIVIDER ── */}
-        <div style={{ lineHeight: 0, marginTop: "72px" }}>
+        <div style={{ marginTop: "80px", lineHeight: 0 }}>
           <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "72px" }}>
-            <path fill="rgba(0,180,216,0.09)" d="M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z">
+            <path fill={`${C}14`} d="M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="7s" repeatCount="indefinite"
                 values="M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z;M0,55 C400,15 900,70 1440,30 L1440,80 L0,80 Z;M0,40 C400,80 900,10 1440,55 L1440,80 L0,80 Z" />
             </path>
-            <path fill="#1B3A6B" d="M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z">
+            <path fill={N} d="M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z">
               <animate attributeName="d" dur="9s" repeatCount="indefinite"
                 values="M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z;M0,50 C480,10 960,65 1440,25 L1440,80 L0,80 Z;M0,30 C480,80 960,0 1440,50 L1440,80 L0,80 Z" />
             </path>
