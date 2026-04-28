@@ -1,574 +1,442 @@
-import { Play, Waves, Camera, Users, Heart, ChevronLeft, ChevronRight, Star, Quote } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
-// Brand Colors
-const COLORS = {
-  navy: "#1B3A6B",
-  cyan: "#00B4D8",
-  lightCyan: "#48CAE4",
-  red: "#E63329",
-};
+// ── Brand palette ──
+const N  = "#1B3A6B";
+const C  = "#00B4D8";
+const LC = "#48CAE4";
+const R  = "#E63329";
 
-interface GallerySectionProps {
-  images: {
-    src: string;
-    alt: string;
-    caption?: string;
-    span?: "wide" | "tall" | "normal";
-  }[];
-  videoThumb: string;
+// ── Types ──
+export interface GalleryImage {
+  src:      string;
+  alt:      string;
+  caption?: string;
 }
 
-// Tourist moments data
-const touristMoments = [
-  { name: "Emma & family", moment: "Sunrise paddle with baby elephants", image: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=800&h=500&fit=crop" },
-  { name: "Wilderness Collective", moment: "Silent glide through mist", image: "https://images.unsplash.com/photo-1582433736551-19e3a2e6c0b6?w=800&h=500&fit=crop" },
-  { name: "Sarah & James", moment: "Just metres from giants", image: "https://images.unsplash.com/photo-1549366021-8a06e197bfd1?w=800&h=500&fit=crop" },
+interface GallerySectionProps {
+  images?:    GalleryImage[];
+  videoThumb?: string;
+}
+
+// ── Default images (replace with real ones) ──
+const DEFAULT_IMAGES: GalleryImage[] = [
+  { src: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=900&h=700&fit=crop", alt: "Kayaking with elephants",  caption: "Gentle giants at dawn — Kalawewa riverbank" },
+  { src: "https://images.unsplash.com/photo-1582433736551-19e3a2e6c0b6?w=600&h=400&fit=crop", alt: "Sunrise kayak",           caption: "Mist over Kalawewa" },
+  { src: "https://images.unsplash.com/photo-1549366021-8a06e197bfd1?w=600&h=400&fit=crop",   alt: "Elephant family",         caption: "Baby elephant bathing" },
+  { src: "https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=600&h=400&fit=crop", alt: "Wildlife encounter",      caption: "Unforgettable moments" },
+  { src: "https://images.unsplash.com/photo-1503788311183-fa3bf9c4d32e?w=600&h=400&fit=crop", alt: "Peaceful paddling",       caption: "Silence is golden" },
 ];
 
+const STORIES = [
+  { avatar: "E", name: "Emma & family",    loc: "London, UK",    quote: "We were 15 metres from a bathing elephant family. They didn't even glance at us." },
+  { avatar: "R", name: "Rajiv Mehta",      loc: "Mumbai, India", quote: "Silent kayaking makes all the difference — elephants behave like we aren't even there." },
+  { avatar: "S", name: "Sarah Chen",       loc: "Singapore",     quote: "Sunrise on the water with mist rising and elephants calling — pure magic. Nothing else like it." },
+];
+
+// ── Helpers ──
+const StarShape = () => (
+  <div style={{
+    width: "9px", height: "9px", background: R, flexShrink: 0,
+    clipPath: "polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)",
+  }} />
+);
+
+const ReelHoles = ({ count = 28 }: { count?: number }) => (
+  <div style={{ display: "flex", gap: "12px", flex: 1, overflow: "hidden" }}>
+    {Array.from({ length: count }).map((_, i) => (
+      <div key={i} style={{ width: "12px", height: "12px", borderRadius: "4px", background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />
+    ))}
+  </div>
+);
+
+// ── Main component ──
 export function GallerySection({ images, videoThumb }: GallerySectionProps) {
+  const galleryImages = (images && images.length >= 4) ? images : DEFAULT_IMAGES;
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [activeMoment, setActiveMoment] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
+  const [curIdx, setCurIdx]             = useState(0);
+  const [isMobile, setIsMobile]         = useState(false);
 
-  // Check mobile viewport
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Auto-rotate tourist moments
+  // Keyboard nav for lightbox
   useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveMoment((prev) => (prev + 1) % touristMoments.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
+    if (!lightboxOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxOpen(false);
+      if (e.key === "ArrowRight") setCurIdx(p => (p + 1) % galleryImages.length);
+      if (e.key === "ArrowLeft")  setCurIdx(p => (p - 1 + galleryImages.length) % galleryImages.length);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightboxOpen, galleryImages.length]);
 
-  const openLightbox = (index: number) => {
-    setCurrentImageIndex(index);
-    setLightboxOpen(true);
-  };
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  // Use provided images or fallback
-  const galleryImages = images.length >= 5 ? images : [
-    { src: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=800&h=600&fit=crop", alt: "Kayaking with elephants", caption: "Gentle giants at dawn" },
-    { src: "https://images.unsplash.com/photo-1582433736551-19e3a2e6c0b6?w=800&h=600&fit=crop", alt: "Sunrise kayak", caption: "Mist over Kalawewa" },
-    { src: "https://images.unsplash.com/photo-1549366021-8a06e197bfd1?w=800&h=600&fit=crop", alt: "Elephant family", caption: "Baby elephant bathing" },
-    { src: "https://images.unsplash.com/photo-1566438480900-0609be27a4be?w=800&h=600&fit=crop", alt: "Wildlife encounter", caption: "Unforgettable moments" },
-    { src: "https://images.unsplash.com/photo-1503788311183-fa3bf9c4d32e?w=800&h=600&fit=crop", alt: "Peaceful paddling", caption: "Silence is golden" },
-  ];
+  const openLB  = (i: number) => { setCurIdx(i); setLightboxOpen(true); };
+  const navLB   = (dir: number) => setCurIdx(p => (p + dir + galleryImages.length) % galleryImages.length);
 
   return (
     <>
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Outfit:wght@300;400;500;600;700&display=swap"
       />
+
       <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes galPulse {
+          0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(230,51,41,.6); }
+          50%      { opacity:.5; box-shadow:0 0 0 5px rgba(230,51,41,0); }
         }
-        @keyframes scaleIn {
-          from { opacity: 0; transform: scale(0.9); }
-          to { opacity: 1; transform: scale(1); }
+        @keyframes galFadeIn {
+          from { opacity:0; transform:scale(.92); }
+          to   { opacity:1; transform:scale(1); }
         }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
+        .gal-frame { transition: box-shadow .3s; }
+        .gal-frame img { transition: transform .5s ease; }
+        .gal-frame:hover img { transform: scale(1.06) !important; }
+        .gal-frame:hover .gal-overlay { opacity: 0.45 !important; }
+        .gal-frame:hover .gal-cap     { opacity: 1 !important; transform: translateY(0) !important; }
+        .gal-story-card { transition: transform .35s cubic-bezier(.34,1.56,.64,1), box-shadow .3s; cursor: default; }
+        .gal-story-card:hover { transform: translateY(-5px); box-shadow: 0 20px 44px rgba(27,58,107,0.22); }
+        .gal-vframe img { transition: opacity .3s; }
+        .gal-vframe:hover img { opacity: 0.45 !important; }
+        .gal-vframe:hover .gal-play-circle { transform: scale(1.12); }
+        .gal-btn-primary {
+          background: ${R}; color: #fff; border: none;
+          padding: 14px 32px; border-radius: 50px;
+          font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700;
+          letter-spacing: .8px; text-transform: uppercase; cursor: pointer;
+          box-shadow: 0 8px 24px rgba(230,51,41,.38);
+          transition: transform .28s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
         }
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
+        .gal-btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 16px 36px rgba(230,51,41,.55); }
+        .gal-btn-secondary {
+          background: rgba(0,180,216,0.12); color: ${C};
+          border: 1px solid rgba(0,180,216,0.28);
+          padding: 14px 28px; border-radius: 50px;
+          font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 600;
+          letter-spacing: .8px; text-transform: uppercase; cursor: pointer;
+          transition: background .25s, transform .25s;
         }
-        .gallery-item {
-          transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+        .gal-btn-secondary:hover { background: rgba(0,180,216,0.22); transform: translateY(-2px); }
+
+        @media (max-width: 640px) {
+          .gal-header-grid { grid-template-columns: 1fr !important; gap: 20px !important; padding: 52px 16px 0 !important; }
+          .gal-film-grid   { grid-template-columns: 1fr !important; }
+          .gal-featured    { height: 280px !important; }
+          .gal-film-cell   { height: 220px !important; }
+          .gal-stories-grid { grid-template-columns: 1fr !important; }
+          .gal-side-pad    { padding: 0 16px !important; }
+          .gal-cta-flex    { flex-direction: column !important; text-align: center !important; padding: 24px 20px !important; }
+          .gal-cta-actions { justify-content: center !important; }
+          .gal-lb-prev     { left: -16px !important; }
+          .gal-lb-next     { right: -16px !important; }
         }
-        .gallery-item:hover {
-          transform: translateY(-6px) scale(1.01);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-        }
-        .lightbox-open {
-          overflow: hidden;
-        }
-        @media (max-width: 768px) {
-          .gallery-grid {
-            grid-template-columns: 1fr !important;
-            gap: 1rem !important;
-          }
-          .gallery-item {
-            height: 280px !important;
-          }
-          .featured-item {
-            grid-column: 1 !important;
-            grid-row: auto !important;
-            height: 320px !important;
-          }
+        @media (max-width: 860px) and (min-width: 641px) {
+          .gal-stories-grid { grid-template-columns: 1fr 1fr !important; }
+          .gal-film-grid    { grid-template-columns: 1fr 1fr !important; }
+          .gal-featured     { grid-row: span 1 !important; height: 260px !important; }
+          .gal-film-cell    { height: 220px !important; }
         }
       `}</style>
 
-      <section
-        id="gallery"
-        style={{
-          background: "#FAF5EA",
-          padding: "5rem 1.5rem 0",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
-        {/* Decorative water ripples */}
-        <div style={{
-          position: "absolute",
-          top: "5%",
-          right: "-5%",
-          width: "300px",
-          height: "300px",
-          borderRadius: "50%",
-          background: `${COLORS.cyan}03`,
-          filter: "blur(60px)",
-          pointerEvents: "none",
-        }} />
-        <div style={{
-          position: "absolute",
-          bottom: "10%",
-          left: "-8%",
-          width: "250px",
-          height: "250px",
-          borderRadius: "50%",
-          background: `${COLORS.lightCyan}03`,
-          filter: "blur(50px)",
-          pointerEvents: "none",
-        }} />
+      <section id="gallery" style={{ background: "#FAF5EA", position: "relative", overflow: "hidden" }}>
 
-        <div style={{ maxWidth: "1280px", margin: "0 auto", position: "relative", zIndex: 2 }}>
+        {/* Subtle dot bg */}
+        <div style={{ position: "absolute", inset: 0, backgroundImage: `radial-gradient(circle, rgba(0,180,216,0.07) 1px, transparent 1px)`, backgroundSize: "28px 28px", pointerEvents: "none", zIndex: 0 }} />
 
-          {/* ── Header with Social Proof ── */}
-          <div style={{ textAlign: "center", marginBottom: "3rem" }}>
+        {/* ── HEADER ── */}
+        <div
+          className="gal-header-grid"
+          style={{
+            maxWidth: "1100px", margin: "0 auto",
+            padding: "72px 28px 0",
+            display: "grid", gridTemplateColumns: "1fr 1fr",
+            gap: "48px", alignItems: "end", marginBottom: "52px",
+            position: "relative", zIndex: 1,
+          }}
+        >
+          <div>
+            {/* pill */}
             <div style={{
-              display: "inline-flex", alignItems: "center", gap: "0.5rem",
-              background: `${COLORS.red}08`,
-              border: `1px solid ${COLORS.red}15`,
-              padding: "0.4rem 1.2rem",
-              borderRadius: "3rem",
-              marginBottom: "1rem",
+              display: "inline-flex", alignItems: "center", gap: "7px",
+              background: "rgba(230,51,41,0.09)", border: "1px solid rgba(230,51,41,0.22)",
+              color: R, padding: "6px 16px", borderRadius: "50px",
+              fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase",
+              fontFamily: "'Outfit', sans-serif", marginBottom: "18px",
             }}>
-              <div style={{
-                width: "6px", height: "6px", borderRadius: "50%",
-                background: COLORS.red,
-                animation: "pulse 2s infinite",
-              }} />
-              <Camera size={12} color={COLORS.red} />
-              <span style={{ color: COLORS.red, fontFamily: "'Outfit', sans-serif", fontSize: "0.65rem", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
-                Real Moments
-              </span>
+              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "galPulse 2s infinite" }} />
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={R} strokeWidth="2.2" strokeLinecap="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              Real Moments
             </div>
 
             <h2 style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(2rem, 5.5vw, 3.5rem)",
-              fontWeight: 700,
-              color: COLORS.navy,
-              lineHeight: 1.1,
-              marginBottom: "0.5rem",
+              fontSize: "clamp(34px,5vw,60px)", fontWeight: 700, color: N,
+              lineHeight: 1.07, letterSpacing: "-0.5px",
             }}>
-              Through the{" "}
-              <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Lens</span>
-              <br />
-              <span style={{ fontSize: "0.6em", color: "#6B7E73" }}>of Our Adventurers</span>
+              Through the<br /><em style={{ color: LC, fontStyle: "italic" }}>Lens</em> of Our<br />Adventurers
             </h2>
+          </div>
 
-            <p style={{
-              fontFamily: "'Outfit', sans-serif", fontWeight: 300,
-              fontSize: "clamp(0.85rem, 1.8vw, 0.95rem)",
-              color: "#6B7E73", maxWidth: "560px", margin: "1rem auto 0", lineHeight: 1.7,
-            }}>
-              Every frame tells a story. These moments are real — no zoom, no staging.
-              Just you, the water, and gentle giants.
+          <div style={{ paddingBottom: "6px" }}>
+            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "14px", fontWeight: 300, color: "#6b7e8a", lineHeight: 1.8, marginBottom: "20px" }}>
+              Every frame is real — no zoom, no staging. Just you, the water, and gentle giants behaving as nature intended. 2,500+ photos tagged by our community.
             </p>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ flex: 1, height: "1px", background: "rgba(0,180,216,0.25)" }} />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2" strokeLinecap="round">
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+              <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 600, color: N, letterSpacing: "0.5px" }}>#WildPaddle</span>
+              <div style={{ flex: 1, height: "1px", background: "rgba(0,180,216,0.25)" }} />
+            </div>
+          </div>
+        </div>
+
+        {/* ── FILM STRIP ── */}
+        <div style={{ position: "relative", zIndex: 1, marginBottom: "56px" }}>
+
+          {/* top reel bar */}
+          <div style={{ background: "#0d1e38", padding: "10px 28px", display: "flex", alignItems: "center", gap: "16px", overflow: "hidden" }}>
+            <ReelHoles />
+            <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "9px", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>
+              KAYAKING KALAWEWA · FILM 2024
+            </span>
+            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "13px", fontWeight: 600, color: LC, whiteSpace: "nowrap" }}>
+              {String(galleryImages.length).padStart(2, "0")} FRAMES
+            </span>
+            <ReelHoles />
           </div>
 
-          {/* ── Live Tourist Counter Banner ── */}
-          <div style={{
-            background: `linear-gradient(135deg, white, ${COLORS.cyan}04)`,
-            borderRadius: "1.25rem",
-            padding: "0.75rem 1.5rem",
-            marginBottom: "2rem",
-            border: `1px solid ${COLORS.cyan}12`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "1rem",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-              <div style={{
-                width: "2.5rem", height: "2.5rem",
-                borderRadius: "50%",
-                background: `${COLORS.cyan}10`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Users size={18} color={COLORS.cyan} />
+          {/* film grid */}
+          <div
+            className="gal-film-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: isMobile ? "1fr" : "2fr 1fr 1fr",
+              gridTemplateRows: isMobile ? "auto" : "260px 220px",
+              gap: "3px",
+              background: "#0d1e38",
+            }}
+          >
+            {/* Featured frame */}
+            <div
+              className="gal-frame gal-featured"
+              onClick={() => openLB(0)}
+              style={{
+                gridRow: isMobile ? "auto" : "span 2",
+                height: isMobile ? "280px" : "auto",
+                position: "relative", overflow: "hidden", cursor: "pointer",
+              }}
+            >
+              <img src={galleryImages[0].src} alt={galleryImages[0].alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <div className="gal-overlay" style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${N}66 0%, transparent 55%)`, transition: "opacity .3s" }} />
+              <div style={{ position: "absolute", top: "12px", left: "14px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 600, color: "rgba(255,255,255,0.35)", letterSpacing: "1px" }}>
+                01 / {String(galleryImages.length).padStart(2, "0")}
               </div>
-              <div>
-                <div style={{ fontSize: "0.65rem", color: "#8AA493", letterSpacing: "1px" }}>SHARED THEIR JOURNEY</div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 700, color: COLORS.navy, fontFamily: "'Cormorant Garamond', serif" }}>
-                  2,500+ <span style={{ fontSize: "0.7rem", color: COLORS.cyan }}>{'photos tagged #WildPaddle'}</span>
-                </div>
+              <div style={{ position: "absolute", top: "12px", right: "14px", background: "rgba(230,51,41,0.9)", borderRadius: "50px", padding: "4px 12px", fontFamily: "'Outfit', sans-serif", fontSize: "9px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#fff" }}>
+                Featured
+              </div>
+              <div className="gal-cap" style={{ position: "absolute", bottom: "14px", left: "14px", right: "14px", fontFamily: "'Outfit', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.88)", lineHeight: 1.4, opacity: 0, transform: "translateY(6px)", transition: "opacity .3s, transform .3s" }}>
+                {galleryImages[0].caption}
               </div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={14} fill={COLORS.red} color={COLORS.red} />
+
+            {/* Frame 2 */}
+            <div className="gal-frame gal-film-cell" onClick={() => openLB(1)} style={{ height: isMobile ? "220px" : "auto", position: "relative", overflow: "hidden", cursor: "pointer" }}>
+              <img src={galleryImages[1].src} alt={galleryImages[1].alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <div className="gal-overlay" style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${N}66 0%, transparent 55%)`, transition: "opacity .3s" }} />
+              <div style={{ position: "absolute", top: "10px", left: "12px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", letterSpacing: "1px" }}>02</div>
+              <div className="gal-cap" style={{ position: "absolute", bottom: "12px", left: "12px", fontFamily: "'Outfit', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.88)", opacity: 0, transform: "translateY(6px)", transition: "opacity .3s, transform .3s" }}>{galleryImages[1].caption}</div>
+            </div>
+
+            {/* Video frame */}
+            <div
+              className="gal-vframe gal-film-cell"
+              style={{ height: isMobile ? "220px" : "auto", position: "relative", overflow: "hidden", cursor: "pointer", background: "#0a1528" }}
+            >
+              <img src={videoThumb || galleryImages[2]?.src || ""} alt="Watch film" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: 0.6 }} />
+              <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "8px" }}>
+                <div
+                  className="gal-play-circle"
+                  style={{ width: "52px", height: "52px", borderRadius: "50%", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: `0 0 0 8px rgba(230,51,41,0.18), 0 8px 24px rgba(0,0,0,0.3)`, transition: "transform .3s cubic-bezier(.34,1.56,.64,1)" }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={R}><path d="M5 3l14 9-14 9V3z"/></svg>
+                </div>
+                <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "9px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#fff" }}>Watch Film</span>
+              </div>
+            </div>
+
+            {/* Frame 3 */}
+            {galleryImages[2] && (
+              <div className="gal-frame gal-film-cell" onClick={() => openLB(2)} style={{ height: isMobile ? "220px" : "auto", position: "relative", overflow: "hidden", cursor: "pointer" }}>
+                <img src={galleryImages[2].src} alt={galleryImages[2].alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <div className="gal-overlay" style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${N}66 0%, transparent 55%)`, transition: "opacity .3s" }} />
+                <div style={{ position: "absolute", top: "10px", left: "12px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", letterSpacing: "1px" }}>03</div>
+                <div className="gal-cap" style={{ position: "absolute", bottom: "12px", left: "12px", fontFamily: "'Outfit', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.88)", opacity: 0, transform: "translateY(6px)", transition: "opacity .3s, transform .3s" }}>{galleryImages[2].caption}</div>
+              </div>
+            )}
+
+            {/* Frame 4 */}
+            {galleryImages[3] && (
+              <div className="gal-frame gal-film-cell" onClick={() => openLB(3)} style={{ height: isMobile ? "220px" : "auto", position: "relative", overflow: "hidden", cursor: "pointer" }}>
+                <img src={galleryImages[3].src} alt={galleryImages[3].alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                <div className="gal-overlay" style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${N}66 0%, transparent 55%)`, transition: "opacity .3s" }} />
+                <div style={{ position: "absolute", top: "10px", left: "12px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", letterSpacing: "1px" }}>04</div>
+                <div className="gal-cap" style={{ position: "absolute", bottom: "12px", left: "12px", fontFamily: "'Outfit', sans-serif", fontSize: "11px", color: "rgba(255,255,255,0.88)", opacity: 0, transform: "translateY(6px)", transition: "opacity .3s, transform .3s" }}>{galleryImages[3].caption}</div>
+              </div>
+            )}
+          </div>
+
+          {/* bottom reel bar */}
+          <div style={{ background: "#0d1e38", padding: "8px 28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "12px", overflow: "hidden", flex: 1 }}>
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div key={i} style={{ width: "12px", height: "12px", borderRadius: "4px", background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />
               ))}
-              <span style={{ fontSize: "0.7rem", color: COLORS.navy, marginLeft: "0.25rem" }}>4.98 ★</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, margin: "0 16px" }}>
+              {[
+                { label: "Eco Travel", bg: "rgba(0,180,216,0.12)", color: C },
+                { label: "Sri Lanka",  bg: "rgba(230,51,41,0.12)", color: R },
+                { label: "Wildlife",   bg: "rgba(27,58,107,0.3)",  color: LC },
+              ].map(tag => (
+                <div key={tag.label} style={{ background: tag.bg, color: tag.color, padding: "3px 10px", borderRadius: "50px", fontFamily: "'Outfit', sans-serif", fontSize: "9px", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+                  {tag.label}
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: "12px", overflow: "hidden", flex: 1, justifyContent: "flex-end" }}>
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div key={i} style={{ width: "12px", height: "12px", borderRadius: "4px", background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* ── Masonry Gallery Grid ── */}
-          <div className="gallery-grid" style={{
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
-            gap: "1rem",
-            marginBottom: "2rem",
-          }}>
-            {/* Featured large image (first image) */}
-            <div
-              className="gallery-item featured-item"
-              onClick={() => openLightbox(0)}
-              style={{
-                gridColumn: isMobile ? "1" : "1 / 3",
-                gridRow: isMobile ? "auto" : "1 / 3",
-                borderRadius: "1.25rem",
-                overflow: "hidden",
-                height: isMobile ? "280px" : "400px",
-                position: "relative",
-                cursor: "pointer",
-              }}
-            >
-              <img
-                src={galleryImages[0]?.src}
-                alt={galleryImages[0]?.alt}
-                style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              />
-              <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${COLORS.navy}66 0%, transparent 50%)` }} />
-              {galleryImages[0]?.caption && (
-                <div style={{ position: "absolute", bottom: "1rem", left: "1rem" }}>
-                  <p style={{ fontFamily: "'Cormorant Garamond', serif", color: "#fff", fontSize: "1rem", fontWeight: 600 }}>{galleryImages[0].caption}</p>
+        {/* ── STORIES ROW ── */}
+        <div className="gal-side-pad" style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 28px", marginBottom: "52px", position: "relative", zIndex: 1 }}>
+
+          {/* section label */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+            <div style={{ flex: 1, height: "1px", background: "rgba(27,58,107,0.1)" }} />
+            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "22px", fontWeight: 700, color: N }}>
+              Traveller <em style={{ color: LC, fontStyle: "italic" }}>Stories</em>
+            </div>
+            <div style={{ flex: 1, height: "1px", background: "rgba(27,58,107,0.1)" }} />
+          </div>
+
+          <div className="gal-stories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "16px" }}>
+            {STORIES.map((s, i) => (
+              <div key={i} className="gal-story-card" style={{ background: N, borderRadius: "20px", padding: "24px 22px 20px", position: "relative", overflow: "hidden" }}>
+                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: `linear-gradient(135deg,${C},${LC})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", fontWeight: 700, color: "#fff", marginBottom: "14px", border: "2px solid rgba(0,180,216,0.3)" }}>
+                  {s.avatar}
                 </div>
-              )}
-              <div style={{ position: "absolute", bottom: "1rem", right: "1rem", background: "rgba(0,0,0,0.5)", padding: "0.25rem 0.75rem", borderRadius: "2rem", backdropFilter: "blur(4px)" }}>
-                <span style={{ fontSize: "0.7rem", color: "#fff" }}>📸 @wildpaddle</span>
-              </div>
-            </div>
-
-            {/* Top right image */}
-            <div
-              className="gallery-item"
-              onClick={() => openLightbox(1)}
-              style={{
-                borderRadius: "1.25rem",
-                overflow: "hidden",
-                height: isMobile ? "280px" : "192px",
-                position: "relative",
-                cursor: "pointer",
-              }}
-            >
-              <img
-                src={galleryImages[1]?.src}
-                alt={galleryImages[1]?.alt}
-                style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-              />
-            </div>
-
-            {/* Video thumbnail */}
-            <div
-              className="gallery-item"
-              onClick={() => window.open("#video-modal", "_blank")}
-              style={{
-                borderRadius: "1.25rem",
-                overflow: "hidden",
-                height: isMobile ? "280px" : "192px",
-                position: "relative",
-                cursor: "pointer",
-              }}
-            >
-              <img
-                src={videoThumb || "https://images.unsplash.com/photo-1549366021-8a06e197bfd1?w=800&h=500&fit=crop"}
-                alt="Watch our video"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-              <div style={{ position: "absolute", inset: 0, background: `radial-gradient(circle, transparent 40%, ${COLORS.navy}33 100%)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <div style={{
-                  width: "3.5rem", height: "3.5rem",
-                  borderRadius: "50%",
-                  background: "white",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  boxShadow: `0 8px 24px rgba(0,0,0,0.2), 0 0 0 3px ${COLORS.red}40`,
-                }}>
-                  <Play size={18} fill={COLORS.red} color={COLORS.red} style={{ marginLeft: "2px" }} />
+                <div style={{ display: "flex", gap: "3px", marginBottom: "10px" }}>
+                  {Array.from({ length: 5 }).map((_, j) => <StarShape key={j} />)}
                 </div>
-              </div>
-              <div style={{ position: "absolute", bottom: "0.75rem", left: "0.75rem" }}>
-                <span style={{ fontFamily: "'Outfit', sans-serif", color: "#fff", fontSize: "0.7rem", fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", background: `${COLORS.red}CC`, padding: "0.25rem 0.75rem", borderRadius: "2rem" }}>
-                  Watch Film
-                </span>
-              </div>
-            </div>
-
-            {/* Bottom row images */}
-            {galleryImages.slice(2, 5).map((img, i) => (
-              <div
-                key={i}
-                className="gallery-item"
-                onClick={() => openLightbox(i + 2)}
-                style={{
-                  borderRadius: "1.25rem",
-                  overflow: "hidden",
-                  height: isMobile ? "280px" : "200px",
-                  position: "relative",
-                  cursor: "pointer",
-                }}
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                />
-                <div style={{ position: "absolute", inset: 0, background: `linear-gradient(to top, ${COLORS.navy}55 0%, transparent 60%)` }} />
-                {img.caption && (
-                  <div style={{ position: "absolute", bottom: "0.75rem", left: "0.75rem" }}>
-                    <p style={{ fontFamily: "'Outfit', sans-serif", color: "#fff", fontSize: "0.75rem", fontWeight: 500 }}>{img.caption}</p>
-                  </div>
-                )}
+                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "16px", fontWeight: 600, color: "#fff", lineHeight: 1.5, fontStyle: "italic", marginBottom: "14px" }}>
+                  "{s.quote}"
+                </div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "11px", fontWeight: 600, color: LC, letterSpacing: "0.5px" }}>{s.name}</div>
+                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "1px" }}>{s.loc}</div>
+                {/* corner orb */}
+                <div style={{ position: "absolute", bottom: "-20px", right: "-20px", width: "80px", height: "80px", borderRadius: "50%", background: "rgba(0,180,216,0.06)", pointerEvents: "none" }} />
               </div>
             ))}
           </div>
+        </div>
 
-          {/* ── Tourist Moments Carousel ── */}
-          <div style={{ marginBottom: "2.5rem" }}>
-            <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", background: `${COLORS.cyan}08`, padding: "0.25rem 1rem", borderRadius: "2rem", marginBottom: "0.75rem" }}>
-                <Heart size={12} color={COLORS.red} />
-                <span style={{ fontSize: "0.65rem", letterSpacing: "1px", color: COLORS.navy, fontWeight: 500 }}>Traveler Stories</span>
+        {/* ── SOCIAL CTA ── */}
+        <div className="gal-side-pad" style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 28px", marginBottom: "0", position: "relative", zIndex: 1 }}>
+          <div
+            className="gal-cta-flex"
+            style={{ background: "#0d1e38", borderRadius: "24px", padding: "32px 40px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "24px", flexWrap: "wrap", position: "relative", overflow: "hidden" }}
+          >
+            <div style={{ position: "absolute", right: "-40px", top: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: "rgba(0,180,216,0.05)", pointerEvents: "none" }} />
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", fontFamily: "'Outfit', sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", color: LC, marginBottom: "8px" }}>
+                <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: R, animation: "galPulse 2s infinite" }} />
+                Join the community
               </div>
-              <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", color: COLORS.navy }}>
-                Unforgettable <span style={{ color: COLORS.lightCyan, fontStyle: "italic" }}>Moments</span> Shared
-              </h3>
-            </div>
-
-            <div style={{
-              background: `linear-gradient(135deg, ${COLORS.navy} 0%, #0F2A4A 100%)`,
-              borderRadius: "1.5rem",
-              padding: "1.5rem",
-              position: "relative",
-              overflow: "hidden",
-            }}>
-              {/* Background pattern */}
-              <div style={{ position: "absolute", inset: 0, opacity: 0.06, pointerEvents: "none" }}>
-                <svg viewBox="0 0 1440 320" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
-                  <path fill={COLORS.cyan} d="M0,96 C300,160 500,32 800,96 C1100,160 1200,64 1440,128 L1440,320 L0,320 Z" />
-                </svg>
-              </div>
-
-              <div style={{ position: "relative", zIndex: 2 }}>
-                <div style={{ textAlign: "center" }}>
-                  <div style={{
-                    width: "4rem", height: "4rem",
-                    borderRadius: "50%",
-                    background: `${COLORS.cyan}15`,
-                    border: `2px solid ${COLORS.cyan}30`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    margin: "0 auto 1rem",
-                    fontSize: "1.1rem",
-                    fontWeight: 600,
-                    color: COLORS.cyan,
-                  }}>
-                    {touristMoments[activeMoment].name.charAt(0)}
-                  </div>
-                  <p style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "1rem",
-                    color: "#fff",
-                    lineHeight: 1.5,
-                    maxWidth: "500px",
-                    margin: "0 auto 0.5rem",
-                    fontStyle: "italic",
-                  }}>
-                    "{touristMoments[activeMoment].moment}"
-                  </p>
-                  <div style={{ fontWeight: 600, color: COLORS.lightCyan, fontSize: "0.85rem" }}>
-                    — {touristMoments[activeMoment].name}
-                  </div>
-
-                  {/* Dot indicators */}
-                  <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1rem" }}>
-                    {touristMoments.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setActiveMoment(idx)}
-                        style={{
-                          width: activeMoment === idx ? "1.5rem" : "0.4rem",
-                          height: "0.25rem",
-                          borderRadius: "0.25rem",
-                          background: activeMoment === idx ? COLORS.cyan : `${COLORS.cyan}40`,
-                          border: "none",
-                          cursor: "pointer",
-                          transition: "all 0.3s ease",
-                        }}
-                      />
-                    ))}
-                  </div>
-                </div>
+              <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(20px,3vw,30px)", fontWeight: 700, color: "#fff", lineHeight: 1.1 }}>
+                Share your <em style={{ color: C, fontStyle: "italic" }}>Wild Paddle</em> moment
               </div>
             </div>
-          </div>
-
-          {/* ── Instagram / Social Link ── */}
-          <div style={{
-            textAlign: "center",
-            padding: "1.5rem 0",
-            borderTop: `1px solid ${COLORS.cyan}12`,
-            borderBottom: `1px solid ${COLORS.cyan}12`,
-            marginBottom: "1rem",
-          }}>
-            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.8rem", color: "#6B7E73", marginBottom: "0.5rem" }}>
-              Join our community of adventurers
-            </p>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-              <Waves size={16} color={COLORS.cyan} />
-              <span style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 600, color: COLORS.navy, letterSpacing: "1px" }}>#WildPaddle</span>
-              <Waves size={16} color={COLORS.cyan} />
+            <div className="gal-cta-actions" style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
+              <button
+                className="gal-btn-primary"
+                onClick={() => document.querySelector("#booking")?.scrollIntoView({ behavior: "smooth" })}
+              >
+                Book Your Adventure →
+              </button>
+              <button className="gal-btn-secondary">#WildPaddle</button>
             </div>
-            <p style={{ fontSize: "0.7rem", color: "#8AA493", marginTop: "0.5rem" }}>
-              Share your moments — tag us for a chance to be featured
-            </p>
           </div>
         </div>
 
-        {/* Lightbox Modal */}
-        {lightboxOpen && (
-          <div
-            onClick={() => setLightboxOpen(false)}
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 1000,
-              background: `rgba(27,58,107,0.95)`,
-              backdropFilter: "blur(12px)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-          >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              style={{
-                maxWidth: "90vw",
-                maxHeight: "90vh",
-                position: "relative",
-                animation: "scaleIn 0.3s ease",
-              }}
-            >
-              <img
-                src={galleryImages[currentImageIndex]?.src}
-                alt={galleryImages[currentImageIndex]?.alt}
-                style={{ maxWidth: "100%", maxHeight: "85vh", borderRadius: "1rem", objectFit: "contain" }}
-              />
-              {galleryImages[currentImageIndex]?.caption && (
-                <p style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  textAlign: "center",
-                  color: "#fff",
-                  marginTop: "0.75rem",
-                  fontSize: "0.85rem",
-                }}>
-                  {galleryImages[currentImageIndex].caption}
-                </p>
-              )}
-              
-              {/* Navigation buttons */}
-              {galleryImages.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    style={{
-                      position: "absolute",
-                      left: "-3rem",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "white",
-                      border: "none",
-                      width: "2.5rem",
-                      height: "2.5rem",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                    }}
-                  >
-                    <ChevronLeft size={20} color={COLORS.navy} />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    style={{
-                      position: "absolute",
-                      right: "-3rem",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      background: "white",
-                      border: "none",
-                      width: "2.5rem",
-                      height: "2.5rem",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                    }}
-                  >
-                    <ChevronRight size={20} color={COLORS.navy} />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Bottom wave divider */}
-        <div style={{ marginTop: "2rem", lineHeight: 0, marginLeft: "-1.5rem", marginRight: "-1.5rem" }}>
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "60px" }}>
-            <path fill={`${COLORS.cyan}06`} d="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z">
-              <animate attributeName="d" dur="7s" repeatCount="indefinite"
-                values="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z;M0,55 C360,15 1080,70 1440,30 L1440,80 L0,80 Z;M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z" />
+        {/* ── WAVE ── */}
+        <div style={{ lineHeight: 0, marginTop: "72px" }}>
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ display: "block", width: "100%", height: "72px" }}>
+            <path fill="rgba(0,180,216,0.08)" d="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z">
+              <animate attributeName="d" dur="7s" repeatCount="indefinite" values="M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z;M0,55 C360,15 1080,70 1440,30 L1440,80 L0,80 Z;M0,40 C360,75 1080,10 1440,55 L1440,80 L0,80 Z" />
             </path>
-            <path fill="#FAF5EA" d="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z">
-              <animate attributeName="d" dur="9s" repeatCount="indefinite"
-                values="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z;M0,30 C360,65 1080,15 1440,55 L1440,80 L0,80 Z;M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z" />
+            <path fill="#0d1e38" d="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z">
+              <animate attributeName="d" dur="9s" repeatCount="indefinite" values="M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z;M0,30 C360,65 1080,15 1440,55 L1440,80 L0,80 Z;M0,50 C360,10 1080,70 1440,30 L1440,80 L0,80 Z" />
             </path>
           </svg>
         </div>
+
+        {/* ── LIGHTBOX ── */}
+        {lightboxOpen && (
+          <div
+            onClick={() => setLightboxOpen(false)}
+            style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(13,30,56,0.96)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(12px)" }}
+          >
+            <div onClick={e => e.stopPropagation()} style={{ position: "relative", maxWidth: "88vw", maxHeight: "88vh", animation: "galFadeIn .3s ease" }}>
+              {/* close */}
+              <button
+                onClick={() => setLightboxOpen(false)}
+                style={{ position: "absolute", top: "-16px", right: "-16px", width: "36px", height: "36px", borderRadius: "50%", background: R, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: "16px", boxShadow: `0 4px 12px rgba(230,51,41,.4)` }}
+              >
+                ✕
+              </button>
+              {/* prev */}
+              <button
+                onClick={() => navLB(-1)}
+                className="gal-lb-prev"
+                style={{ position: "absolute", left: "-52px", top: "50%", transform: "translateY(-50%)", width: "38px", height: "38px", borderRadius: "50%", background: "#fff", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,.2)" }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={N} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <img
+                src={galleryImages[curIdx]?.src}
+                alt={galleryImages[curIdx]?.alt}
+                style={{ maxWidth: "100%", maxHeight: "82vh", borderRadius: "16px", objectFit: "contain", display: "block" }}
+              />
+              {galleryImages[curIdx]?.caption && (
+                <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", color: "rgba(255,255,255,0.6)", textAlign: "center", marginTop: "12px" }}>
+                  {galleryImages[curIdx].caption}
+                </p>
+              )}
+              {/* next */}
+              <button
+                onClick={() => navLB(1)}
+                className="gal-lb-next"
+                style={{ position: "absolute", right: "-52px", top: "50%", transform: "translateY(-50%)", width: "38px", height: "38px", borderRadius: "50%", background: "#fff", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(0,0,0,.2)" }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={N} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </>
   );

@@ -6,6 +6,7 @@ import { TourDetailsSection } from "./components/TourDetailsSection";
 import { SafetySection } from "./components/SafetySection";
 import { GallerySection } from "./components/GallerySection";
 import { TestimonialsSection } from "./components/TestimonialsSection";
+import { CommunityStoriesSection } from "./components/CommunityStoriesSection";
 import { BookingSection } from "./components/BookingSection";
 import { FAQSection } from "./components/FAQSection";
 import { Footer } from "./components/Footer";
@@ -99,6 +100,7 @@ export default function App() {
       <SafetySection />
       <GallerySection images={galleryImages} videoThumb={riverMistImg} />
       <TestimonialsSection testimonials={testimonials} />
+      <CommunityStoriesSection videos={[]} />
       <BookingSection />
       <FAQSection />
       <Footer />
