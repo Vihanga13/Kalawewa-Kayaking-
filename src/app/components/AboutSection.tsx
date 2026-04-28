@@ -380,58 +380,7 @@ export function AboutSection() {
           </div>
 
           {/* ── TESTIMONIALS ── */}
-          <div ref={testiRef}>
-            <div style={{ textAlign: "center", marginBottom: "36px" }}>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: `${C.cyan}10`, border: `1px solid ${C.cyan}22`, padding: "6px 18px", borderRadius: "50px", marginBottom: "14px" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "10px", fontWeight: 600, color: C.navy, letterSpacing: "2px", textTransform: "uppercase" }}>
-                  Voices From the Water
-                </span>
-              </div>
-              <h3 style={{
-                fontFamily: "'Fraunces', serif",
-                fontSize: "clamp(26px, 4vw, 40px)", fontWeight: 700, color: C.navy,
-                opacity: testiIn ? 1 : 0, transform: testiIn ? "translateY(0)" : "translateY(16px)",
-                transition: "opacity 0.6s, transform 0.6s",
-              }}>
-                What Our{" "}
-                <em style={{ color: C.cyan, fontStyle: "italic" }}>Adventurers</em> Say
-              </h3>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "18px" }}>
-              {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className="ab-testi"
-                  style={{
-                    background: "#fff", borderRadius: "20px", padding: "28px 26px",
-                    border: "1px solid rgba(27,58,107,0.07)",
-                    boxShadow: "0 3px 14px rgba(0,0,0,0.04)",
-                    transition: "transform 0.3s, box-shadow 0.3s, border-color 0.3s",
-                    opacity: testiIn ? 1 : 0,
-                    transform: testiIn ? "translateY(0)" : "translateY(24px)",
-                    transitionDelay: `${0.1 + i * 0.1}s`,
-                  }}
-                >
-                  <div style={{ fontFamily: "Georgia, serif", fontSize: "44px", lineHeight: 0.8, color: `${C.cyan}28`, marginBottom: "10px" }}>"</div>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "14px", fontWeight: 300, color: "#4A5B4E", lineHeight: 1.72, marginBottom: "20px", fontStyle: "italic" }}>
-                    {t.quote}
-                  </p>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <div>
-                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: "13px", color: C.navy }}>{t.author}</div>
-                      <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "11px", color: "#9AADA0", marginTop: "2px" }}>{t.location}</div>
-                    </div>
-                    <div style={{ display: "flex", gap: "2px" }}>
-                      {[...Array(5)].map((_, j) => (
-                        <span key={j} style={{ color: C.red, fontSize: "12px" }}>★</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          
         </div>
 
         {/* ── WAVE DIVIDER ── */}

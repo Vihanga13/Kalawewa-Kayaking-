@@ -338,45 +338,7 @@ export function UniqueValueSection() {
           </div>
 
           {/* ── TESTIMONIALS ── */}
-          <div
-            ref={quotesRef}
-            className="uv-quotes-grid"
-            style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "16px", marginBottom: "52px" }}
-          >
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className="uv-quote-card"
-                style={{
-                  background: "rgba(255,255,255,0.04)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: "20px",
-                  padding: "24px 22px 20px",
-                  opacity: quotesIn ? 1 : 0,
-                  transform: quotesIn ? "translateY(0)" : "translateY(28px)",
-                  transition: `opacity .6s ease ${i * 0.12}s, transform .6s ease ${i * 0.12}s`,
-                }}
-              >
-                {/* Stars */}
-                <div style={{ display: "flex", gap: "3px", marginBottom: "12px" }}>
-                  {Array.from({ length: 5 }).map((_, j) => <StarShape key={j} />)}
-                </div>
-                <p style={{
-                  fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 300,
-                  color: "rgba(255,255,255,0.65)", lineHeight: 1.7,
-                  fontStyle: "italic", marginBottom: "14px",
-                }}>
-                  "{t.quote}"
-                </p>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "12px", fontWeight: 600, color: LC, letterSpacing: "0.4px" }}>
-                  {t.name}
-                </div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "2px", letterSpacing: "0.4px" }}>
-                  {t.loc}
-                </div>
-              </div>
-            ))}
-          </div>
+          
 
           {/* ── CTA BAR ── */}
           <div

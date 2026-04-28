@@ -321,38 +321,7 @@ export function GallerySection({ images, videoThumb }: GallerySectionProps) {
           </div>
         </div>
 
-        {/* ── STORIES ROW ── */}
-        <div className="gal-side-pad" style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 28px", marginBottom: "52px", position: "relative", zIndex: 1 }}>
-
-          {/* section label */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
-            <div style={{ flex: 1, height: "1px", background: "rgba(27,58,107,0.1)" }} />
-            <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "22px", fontWeight: 700, color: N }}>
-              Traveller <em style={{ color: LC, fontStyle: "italic" }}>Stories</em>
-            </div>
-            <div style={{ flex: 1, height: "1px", background: "rgba(27,58,107,0.1)" }} />
-          </div>
-
-          <div className="gal-stories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "16px" }}>
-            {STORIES.map((s, i) => (
-              <div key={i} className="gal-story-card" style={{ background: N, borderRadius: "20px", padding: "24px 22px 20px", position: "relative", overflow: "hidden" }}>
-                <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: `linear-gradient(135deg,${C},${LC})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", fontWeight: 700, color: "#fff", marginBottom: "14px", border: "2px solid rgba(0,180,216,0.3)" }}>
-                  {s.avatar}
-                </div>
-                <div style={{ display: "flex", gap: "3px", marginBottom: "10px" }}>
-                  {Array.from({ length: 5 }).map((_, j) => <StarShape key={j} />)}
-                </div>
-                <div style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "16px", fontWeight: 600, color: "#fff", lineHeight: 1.5, fontStyle: "italic", marginBottom: "14px" }}>
-                  "{s.quote}"
-                </div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "11px", fontWeight: 600, color: LC, letterSpacing: "0.5px" }}>{s.name}</div>
-                <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "rgba(255,255,255,0.3)", marginTop: "1px" }}>{s.loc}</div>
-                {/* corner orb */}
-                <div style={{ position: "absolute", bottom: "-20px", right: "-20px", width: "80px", height: "80px", borderRadius: "50%", background: "rgba(0,180,216,0.06)", pointerEvents: "none" }} />
-              </div>
-            ))}
-          </div>
-        </div>
+        
 
         {/* ── SOCIAL CTA ── */}
         <div className="gal-side-pad" style={{ maxWidth: "1100px", margin: "0 auto", padding: "0 28px", marginBottom: "0", position: "relative", zIndex: 1 }}>

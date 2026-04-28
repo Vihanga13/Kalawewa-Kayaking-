@@ -422,70 +422,7 @@ export function TourDetailsSection() {
             </div>
           </div>
 
-          {/* ── REVIEWS ── */}
-          <div ref={revRef}>
-            <div style={{ textAlign: "center", marginBottom: "28px" }}>
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: "7px",
-                background: "rgba(0,180,216,0.08)", border: "1px solid rgba(0,180,216,0.15)",
-                color: N, padding: "5px 16px", borderRadius: "50px",
-                fontSize: "9px", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase",
-                fontFamily: "'Outfit', sans-serif", marginBottom: "14px",
-              }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C} strokeWidth="2.2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Loved by Travellers
-              </div>
-              <h3 style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(26px,4vw,44px)", fontWeight: 700, color: N, lineHeight: 1.1,
-              }}>
-                What Our <em style={{ color: LC, fontStyle: "italic" }}>Adventurers</em> Say
-              </h3>
-            </div>
-
-            <div
-              className="td-reviews-grid"
-              style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "16px", marginBottom: "52px" }}
-            >
-              {reviews.map((rev, i) => (
-                <div
-                  key={i}
-                  className="td-review-card"
-                  style={{
-                    background: "#fff",
-                    border: "1px solid rgba(27,58,107,0.07)",
-                    borderRadius: "20px",
-                    padding: "22px 20px",
-                    cursor: "default",
-                    opacity: revIn ? 1 : 0,
-                    transform: revIn ? "translateY(0)" : "translateY(28px)",
-                    transition: `opacity .6s ease ${i * 0.1}s, transform .6s ease ${i * 0.1}s`,
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
-                    <div style={{
-                      width: "36px", height: "36px", borderRadius: "50%",
-                      background: `linear-gradient(135deg, ${C}, ${LC})`,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: "14px", fontWeight: 700, color: "#fff", flexShrink: 0,
-                    }}>
-                      {rev.avatar}
-                    </div>
-                    <div>
-                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "13px", fontWeight: 600, color: N }}>{rev.name}</div>
-                      <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "10px", color: "#8aabb0", marginTop: "1px" }}>{rev.loc} · {rev.date}</div>
-                    </div>
-                  </div>
-                  <div style={{ display: "flex", gap: "2px", marginBottom: "8px" }}>
-                    {Array.from({ length: 5 }).map((_, j) => <StarShape key={j} />)}
-                  </div>
-                  <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "12.5px", fontWeight: 300, color: "#5a6b7a", lineHeight: 1.65, fontStyle: "italic" }}>
-                    "{rev.comment}"
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          
 
           {/* ── CTA BAR ── */}
           <div
