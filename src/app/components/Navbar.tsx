@@ -164,6 +164,7 @@ export function Navbar() {
                 fontWeight: 700, 
                 lineHeight: 1.1,
                 transition: "color 0.3s ease",
+                textShadow: scrolled ? "none" : "0 2px 4px rgba(0,0,0,0.3)",
               }}>
                 Wild Paddle
               </div>
@@ -175,6 +176,7 @@ export function Navbar() {
                 fontFamily: "'Outfit', sans-serif",
                 fontWeight: 500,
                 transition: "color 0.3s ease",
+                textShadow: scrolled ? "none" : "0 1px 3px rgba(0,0,0,0.3)",
               }}>
                 Sri Lanka
               </div>
@@ -192,16 +194,17 @@ export function Navbar() {
                   background: "none", 
                   border: "none", 
                   cursor: "pointer",
-                  color: scrolled ? COLORS.navy : "rgba(255,255,255,0.85)",
+                  color: scrolled ? COLORS.navy : "#fff",
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: "0.85rem", 
                   fontWeight: 500,
                   letterSpacing: "0.3px",
                   transition: "color 0.2s",
                   padding: "0.5rem 0",
+                  textShadow: scrolled ? "none" : "0 1px 2px rgba(0,0,0,0.3)",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.cyan)}
-                onMouseLeave={(e) => (e.currentTarget.style.color = scrolled ? COLORS.navy : "rgba(255,255,255,0.85)")}
+                onMouseEnter={(e) => (e.currentTarget.style.color = COLORS.lightCyan)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = scrolled ? COLORS.navy : "#fff")}
               >
                 {link.label}
               </button>
@@ -213,13 +216,13 @@ export function Navbar() {
               alignItems: "center",
               gap: "0.25rem",
               padding: "0.25rem 0.75rem",
-              background: scrolled ? `${COLORS.cyan}06` : "rgba(255,255,255,0.08)",
+              background: scrolled ? `${COLORS.cyan}08` : "rgba(255,255,255,0.15)",
               borderRadius: "2rem",
-              border: `1px solid ${scrolled ? COLORS.cyan : "rgba(255,255,255,0.15)"}`,
+              border: `1px solid ${scrolled ? COLORS.cyan : "rgba(255,255,255,0.3)"}`
             }}>
               <Star size={12} fill={COLORS.red} color={COLORS.red} />
-              <span style={{ fontSize: "0.7rem", color: scrolled ? COLORS.navy : "#fff", fontWeight: 500 }}>4.98</span>
-              <span style={{ fontSize: "0.65rem", color: scrolled ? "#8AA493" : "rgba(255,255,255,0.5)" }}>(2k+)</span>
+              <span style={{ fontSize: "0.7rem", color: scrolled ? COLORS.navy : "#fff", fontWeight: 500, textShadow: scrolled ? "none" : "0 1px 2px rgba(0,0,0,0.2)" }}>4.98</span>
+              <span style={{ fontSize: "0.65rem", color: scrolled ? "#8AA493" : "#fff", textShadow: scrolled ? "none" : "0 1px 2px rgba(0,0,0,0.2)" }}>(2k+)</span>
             </div>
           </div>
 
@@ -263,6 +266,7 @@ export function Navbar() {
               color: scrolled ? COLORS.navy : "#fff", 
               padding: "0.5rem",
               transition: "color 0.3s ease",
+              filter: scrolled ? "none" : "drop-shadow(0 1px 2px rgba(0,0,0,0.3))",
             }}
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}

@@ -99,7 +99,7 @@ export default function App() {
       <TourDetailsSection />
       <SafetySection />
       <GallerySection images={galleryImages} videoThumb={riverMistImg} />
-      <TestimonialsSection testimonials={testimonials} />
+      <TestimonialsSection  />
       <CommunityStoriesSection videos={[]} />
       <BookingSection />
       <FAQSection />
