@@ -10,6 +10,7 @@ import { CommunityStoriesSection } from "./components/CommunityStoriesSection";
 import { BookingSection } from "./components/BookingSection";
 import { FAQSection } from "./components/FAQSection";
 import { Footer } from "./components/Footer";
+import { CookieBanner } from "./components/CookieBanner";
 
 // === Images ===
 const heroImg =
@@ -92,6 +93,7 @@ const testimonials = [
 export default function App() {
   return (
     <div style={{ fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
+      <CookieBanner />
       <Navbar />
       <HeroSection />
       <AboutSection />
