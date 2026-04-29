@@ -92,7 +92,7 @@ const testimonials = [
 
 export default function App() {
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif", overflowX: "hidden" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", overflowX: "hidden", margin: 0, padding: 0, width: "100%" }}>
       <CookieBanner />
       <Navbar />
       <HeroSection />

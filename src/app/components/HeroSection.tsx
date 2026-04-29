@@ -211,38 +211,6 @@ export function HeroSection({ onBookClick, onVideoClick }: HeroSectionProps) {
           }} />
         </div>
 
-        {/* ── Floating Badge ── */}
-        <div style={{
-          position: "absolute",
-          top: "86px",
-          left: "50%",
-          zIndex: 10,
-          display: "flex", alignItems: "center", gap: "8px",
-          background: "rgba(255,255,255,0.07)",
-          backdropFilter: "blur(18px)",
-          border: "1px solid rgba(255,255,255,0.14)",
-          padding: "7px 20px",
-          borderRadius: "50px",
-          whiteSpace: "nowrap",
-          animation: "badgeDrop 0.7s ease-out 0.1s both",
-        }}>
-          <div style={{
-            width: "6px", height: "6px",
-            borderRadius: "50%",
-            background: "#4CAF82",
-            animation: "liveDot 2.2s ease-in-out infinite",
-          }} />
-          <span style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "10px", fontWeight: 500,
-            color: "rgba(255,255,255,0.85)",
-            letterSpacing: "2.2px",
-            textTransform: "uppercase",
-          }}>
-            First in South Asia · Sri Lanka
-          </span>
-        </div>
-
         {/* ── Headline & content ── */}
         <div style={{
           position: "relative",

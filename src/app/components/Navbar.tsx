@@ -187,8 +187,10 @@ export function Navbar() {
           top: 0, left: 0, right: 0,
           zIndex: 1000,
           // When scrolled: the wrapper itself becomes the glass bar
-          background: scrolled ? "rgba(255,255,255,0.97)" : "transparent",
-          backdropFilter: scrolled ? "blur(20px)" : "none",
+          background: scrolled
+            ? "rgba(255,255,255,0.97)"
+            : "linear-gradient(to bottom, rgba(6, 18, 34, 0.68) 0%, rgba(6, 18, 34, 0.22) 55%, rgba(6, 18, 34, 0) 100%)",
+          backdropFilter: scrolled ? "blur(20px)" : "blur(6px)",
           borderBottom: scrolled ? `1px solid rgba(0,180,216,0.1)` : "none",
           boxShadow: scrolled ? "0 2px 24px rgba(15,34,68,0.08)" : "none",
           transition: "background 0.55s ease, backdrop-filter 0.55s ease, border-color 0.55s ease, box-shadow 0.55s ease",
@@ -457,8 +459,6 @@ export function Navbar() {
         )}
       </nav>
 
-      {/* Spacer */}
-      <div style={{ height: "5rem" }} />
     </>
   );
 }
