@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Anchor, Star, Calendar, Waves, ChevronRight } from "lucide-react";
+import { Menu, X, Star, Calendar, Waves, ChevronRight } from "lucide-react";
+import logo from "../../public/logo.svg";
 
 const COLORS = {
   navy: "#1B3A6B",
@@ -251,33 +252,14 @@ export function Navbar() {
           >
             {/* Logo mark */}
             <div style={{
-              width: "2.1rem", height: "2.1rem", flexShrink: 0,
-              background: `linear-gradient(135deg, ${COLORS.cyan}, ${COLORS.lightCyan})`,
+              width: "2.8rem", height: "2.8rem", flexShrink: 0,
               borderRadius: "0.6rem",
               display: "flex", alignItems: "center", justifyContent: "center",
-              boxShadow: `0 2px 10px ${COLORS.cyan}35`,
+              overflow: "hidden",
             }}>
-              <Anchor size={14} color="white" strokeWidth={2.2} />
+              <img src={logo} alt="Wild Paddle Logo" style={{ width: "280%", height: "280%" }} />
             </div>
-            <div>
-              <div style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "1.05rem", fontWeight: 700, lineHeight: 1,
-                color: scrolled ? COLORS.navy : "#ffffff",
-                transition: "color 0.4s ease",
-              }}>
-                Wild Paddle
-              </div>
-              <div style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: "0.5rem", fontWeight: 600, letterSpacing: "2px",
-                textTransform: "uppercase",
-                color: scrolled ? COLORS.cyan : COLORS.lightCyan,
-                transition: "color 0.4s ease",
-              }}>
-                Sri Lanka
-              </div>
-            </div>
+            
 
             {/* Mobile hamburger — lives inside logo island */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginLeft: scrolled ? "0.75rem" : "0.25rem" }}>
